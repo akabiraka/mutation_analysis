@@ -6,7 +6,7 @@ from data_analyzers.Mutation import Mutation
 
 class ProThermDB(object):
     def __init__(self) -> None:
-        self.file_path = "data/ProThermDB_Oct_2021.tsv"
+        self.file_path = "data/downloaded_as/ProThermDB_Oct_2021.tsv"
         self.df = pd.read_csv(self.file_path, delimiter="\t")
         
 
@@ -92,7 +92,7 @@ class ProThermDB(object):
 proThermDB = ProThermDB()
 n_rows_to_skip = 0
 n_rows_to_evalutate = 1000000
-out_file_path="ProThermDB.csv"
+out_file_path="data/clean_1/ProThermDB.csv"
 
 for row in proThermDB.df.itertuples():
     if row.Index+1 <= n_rows_to_skip: continue

@@ -5,8 +5,10 @@ import os
 
 class Mutation(object):
     def __init__(self) -> None:
-        self.cols = ["pdb_id", "chain_id", "uniprot_id", "mutation_event", "event_based_on", "wild_residue", "mutant_residue", "mutation_site", 
-                    "ddg", "ph", "temp", "method", "source_file_path", "source_id", "source_row_index", "pubmed_id", "extra_info"]
+        self.cols = ["pdb_id", "chain_id", "uniprot_id", "mutation_event", 
+                    "event_based_on", "wild_residue", "mutant_residue", "mutation_site", 
+                    "ddg", "ph", "temp", "method", "source_file_path", "source_id", 
+                    "source_row_index", "pubmed_id", "extra_info"]
         
         self.pdb_id = None
         self.chain_id = None
@@ -42,7 +44,8 @@ class Mutation(object):
         out_df = self.__get_out_df(out_file_path)
         check_unique_mask = (out_df["pdb_id"]==self.pdb_id) & (out_df["chain_id"]==self.chain_id) \
                             & (out_df["mutation_event"]==self.mutation_event) & (out_df["event_based_on"]==self.event_based_on) \
-                            & (out_df["ddg"]==self.ddg) & (out_df["ph"]==self.ph) & (out_df["temp"]==self.temp) & (out_df["method"]==self.method)
+                            & (out_df["ddg"]==self.ddg) & (out_df["ph"]==self.ph) \
+                            & (out_df["temp"]==self.temp) & (out_df["method"]==self.method)
 
         if out_df[check_unique_mask].size == 0:
             data_dict = {"pdb_id":self.pdb_id, 
