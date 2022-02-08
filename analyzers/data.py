@@ -32,5 +32,6 @@ def print_class_distribution(df):
 
 # print_class_distribution(pd.read_csv("data/clean_1/ProThermDB.csv"))
 # print_class_distribution(pd.read_csv("data/clean_1/PON_TStab.csv"))
-print_class_distribution(pd.read_csv("data/clean_1/I_Mutant_2_seq.csv"))
-print_class_distribution(pd.read_csv("data/clean_1/I_Mutant_2_structure.csv"))
+# print_class_distribution(pd.read_csv("data/clean_1/I_Mutant_2_seq.csv"))
+# print_class_distribution(pd.read_csv("data/clean_1/I_Mutant_2_structure.csv"))
+print_class_distribution(pd.read_csv("data/clean_1/PoPMuSiC_2.csv"))
