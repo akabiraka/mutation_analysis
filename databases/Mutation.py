@@ -8,7 +8,7 @@ class Mutation(object):
         self.cols = ["pdb_id", "chain_id", "uniprot_id", "mutation_event", 
                     "event_based_on", "wild_residue", "mutant_residue", "mutation_site", 
                     "ddg", "ph", "temp", "method", "source_file_path", "source_id", 
-                    "source_row_index", "pubmed_id", "extra_info"]
+                    "source_row_index", "pubmed_id", "extra_info", "protein"]
         
         self.pdb_id = None
         self.chain_id = None
@@ -27,12 +27,27 @@ class Mutation(object):
         self.uniprot_id = None
         self.pubmed_id = None
         self.extra_info = None
+        self.protein = None
 
 
     def __str__(self):
-        return "pdb_id={}, uniprot_id={}, chain_id={}, mutation_event={}, event_based_on={}, ddg={}, ph={}, temp(c)={}, method={}, source_file_path={}, source_id={}, source_row_index={}, pubmed_id={}, extra_info={}".format(
+        return "pdb_id={}, \
+                uniprot_id={}, \
+                chain_id={}, \
+                mutation_event={}, \
+                event_based_on={}, \
+                ddg={}, \
+                ph={}, \
+                temp(c)={}, \
+                method={}, \
+                source_file_path={}, \
+                source_id={}, \
+                source_row_index={}, \
+                pubmed_id={}, \
+                extra_info={}, \
+                protein={}".format(
             self.pdb_id, self.uniprot_id, self.chain_id, self.mutation_event, self.event_based_on, self.ddg, self.ph, self.temp, 
-            self.method, self.source_file_path, self.source_id, self.source_row_index, self.pubmed_id, self.extra_info)
+            self.method, self.source_file_path, self.source_id, self.source_row_index, self.pubmed_id, self.extra_info, self.protein)
     
 
     def __get_out_df(self, out_file_path):
@@ -64,7 +79,8 @@ class Mutation(object):
                         "source_id": self.source_id, 
                         "source_row_index":self.source_row_index, 
                         "pubmed_id": self.pubmed_id, 
-                        "extra_info": self.extra_info}
+                        "extra_info": self.extra_info,
+                        "protein": self.protein}
             
             out_df = out_df.append(data_dict, ignore_index=True)
             out_df.to_csv(out_file_path, index=False)

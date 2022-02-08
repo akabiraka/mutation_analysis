@@ -2,7 +2,7 @@ import sys
 sys.path.append("../mutation_analysis")
 import pandas as pd
 
-from data_analyzers.Mutation import Mutation
+from databases.Mutation import Mutation
 
 class ProThermDB(object):
     def __init__(self) -> None:
@@ -25,6 +25,7 @@ class ProThermDB(object):
         mutation.ddg = float(row.ddg.split(" ")[0]) #case: -0.76 (0.9)
         
         mutation.extra_info = row.MUTATION+","+row.PDB_Chain_Mutation
+        mutation.protein = row.PROTEIN
 
         mutation.source_file_path = self.file_path
         mutation.source_id = row.NO
