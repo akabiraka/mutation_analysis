@@ -5,49 +5,77 @@ import os
 
 class Mutation(object):
     def __init__(self) -> None:
-        self.cols = ["pdb_id", "chain_id", "uniprot_id", "mutation_event", 
-                    "event_based_on", "wild_residue", "mutant_residue", "mutation_site", 
-                    "ddg", "ph", "temp", "method", "source_file_path", "source_id", 
-                    "source_row_index", "pubmed_id", "extra_info", "protein"]
+        self.cols = ["pdb_id", "chain_id", "uniprot_id", "pubmed_id", "protein",
+                    "mutation_event", "wild_residue", "mutation_site", "mutant_residue",
+                    "ddg", "ph", "temp", 
+                    "inverse_pdb_id", "inverse_chain_id",
+                    "method", "event_based_on", 
+                    "source_file_path", "source_id", "source_row_index", 
+                    "extra_info"]
         
         self.pdb_id = None
         self.chain_id = None
+        self.uniprot_id = None
+        self.pubmed_id = None
+        self.protein = None
+
         self.mutation_event = None
-        self.event_based_on = None
         self.wild_residue = None
-        self.mutant_residue = None
         self.mutation_site = None
+        self.mutant_residue = None
+        
         self.ddg = None
         self.ph = None
         self.temp = None
+
+        self.inverse_pdb_id = None
+        self.inverse_chain_id = None
+
         self.method = None
+        self.event_based_on = None
+
         self.source_file_path = None
         self.source_id = None
         self.source_row_index = None
-        self.uniprot_id = None
-        self.pubmed_id = None
+        
         self.extra_info = None
-        self.protein = None
 
 
     def __str__(self):
         return "pdb_id={}, \
+                chain_id={},\
                 uniprot_id={}, \
-                chain_id={}, \
+                pubmed_id={}, \
+                protein={}, \
                 mutation_event={}, \
-                event_based_on={}, \
                 ddg={}, \
                 ph={}, \
                 temp(c)={}, \
+                inverse_pdb_id={}, \
+                inverse_chain_id={}, \
                 method={}, \
+                event_based_on={}, \
                 source_file_path={}, \
                 source_id={}, \
                 source_row_index={}, \
-                pubmed_id={}, \
-                extra_info={}, \
-                protein={}".format(
-            self.pdb_id, self.uniprot_id, self.chain_id, self.mutation_event, self.event_based_on, self.ddg, self.ph, self.temp, 
-            self.method, self.source_file_path, self.source_id, self.source_row_index, self.pubmed_id, self.extra_info, self.protein)
+                extra_info={}".format(
+                    self.pdb_id,
+                    self.chain_id,
+                    self.uniprot_id,
+                    self.pubmed_id,
+                    self.protein,
+                    self.mutation_event, 
+                    self.ddg, 
+                    self.ph, 
+                    self.temp, 
+                    self.inverse_pdb_id,
+                    self.inverse_chain_id,
+                    self.method, 
+                    self.event_based_on,
+                    self.source_file_path,
+                    self.source_id, 
+                    self.source_row_index, 
+                    self.extra_info)
     
 
     def __get_out_df(self, out_file_path):
@@ -64,23 +92,25 @@ class Mutation(object):
 
         if out_df[check_unique_mask].size == 0:
             data_dict = {"pdb_id":self.pdb_id, 
+                        "chain_id":self.chain_id,
                         "uniprot_id":self.uniprot_id, 
-                        "chain_id":self.chain_id, 
+                        "pubmed_id": self.pubmed_id, 
+                        "protein": self.protein,
                         "mutation_event":self.mutation_event, 
-                        "event_based_on": self.event_based_on, 
                         "wild_residue": self.wild_residue, 
-                        "mutant_residue": self.mutant_residue, 
                         "mutation_site": self.mutation_site, 
+                        "mutant_residue": self.mutant_residue,
                         "ddg": self.ddg, 
                         "ph": self.ph, 
                         "temp": self.temp, 
+                        "inverse_pdb_id": self.inverse_pdb_id,
+                        "inverse_chain_id": self.inverse_chain_id,
                         "method": self.method, 
+                        "event_based_on": self.event_based_on,
                         "source_file_path": self.source_file_path, 
                         "source_id": self.source_id, 
                         "source_row_index":self.source_row_index, 
-                        "pubmed_id": self.pubmed_id, 
-                        "extra_info": self.extra_info,
-                        "protein": self.protein}
+                        "extra_info": self.extra_info}
             
             out_df = out_df.append(data_dict, ignore_index=True)
             out_df.to_csv(out_file_path, index=False)

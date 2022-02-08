@@ -16,21 +16,14 @@ class PoPMuSiC_2(object):
         mutation.pdb_id = row.PDB[:-1]
         mutation.chain_id = row.CHAIN
         mutation.mutation_event = row.Variation
-        mutation.event_based_on = None
         mutation.wild_residue = row.Variation[0]
         mutation.mutant_residue = row.Variation[-1]
         mutation.mutation_site = int(row.Variation[1:-1])
         mutation.ddg = float(row.ddG)
         mutation.ph = float(row.pH)
         mutation.temp = float(row.T)
-        mutation.method = None
         mutation.source_file_path = self.file_path
-        mutation.source_id = None
         mutation.source_row_index = row.Index
-        mutation.uniprot_id = None
-        mutation.pubmed_id = None
-        mutation.extra_info = None
-        mutation.protein = None
         return [mutation]
 
 

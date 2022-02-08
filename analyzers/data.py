@@ -12,8 +12,9 @@ def print_class_distribution(df):
     n_uniprot_ids = len(df["uniprot_id"].dropna().unique().tolist())
     n_pubmed_ids = len(df["pubmed_id"].dropna().unique().tolist())
     n_proteins = len(df["protein"].dropna().unique().tolist())
+    n_inv_pdb_ids = len(df["inverse_pdb_id"].dropna().unique().tolist())
     
-    print("n_pdb_ids: {}, n_uniprot_ids: {}, n_pubmed_ids:{}, n_proteins:{}".format(n_pdb_ids, n_uniprot_ids, n_pubmed_ids, n_proteins))
+    print("n_pdb_ids: {}, n_uniprot_ids: {}, n_pubmed_ids:{}, n_proteins:{}, n_inv_pdb_ids:{}".format(n_pdb_ids, n_uniprot_ids, n_pubmed_ids, n_proteins, n_inv_pdb_ids))
     
     n_destabilizing = df[df["ddg"]<-1.0].shape[0]
     n_destabilizing_hard = df[df["ddg"]<=-5.0].shape[0]
@@ -34,4 +35,5 @@ def print_class_distribution(df):
 # print_class_distribution(pd.read_csv("data/clean_1/PON_TStab.csv"))
 # print_class_distribution(pd.read_csv("data/clean_1/I_Mutant_2_seq.csv"))
 # print_class_distribution(pd.read_csv("data/clean_1/I_Mutant_2_structure.csv"))
-print_class_distribution(pd.read_csv("data/clean_1/PoPMuSiC_2.csv"))
+# print_class_distribution(pd.read_csv("data/clean_1/PoPMuSiC_2.csv"))
+print_class_distribution(pd.read_csv("data/clean_1/Ssym.csv"))
