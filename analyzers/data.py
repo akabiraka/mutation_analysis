@@ -8,17 +8,19 @@ def print_class_distribution(df):
     n_mutation_rows = df.shape[0]
     print("#-mutations: {}".format(n_mutation_rows))
 
-    n_pdb_ids = len(df["pdb_id"].unique().tolist())
-    n_uniprot_ids = len(df["uniprot_id"].unique().tolist())
-    n_proteins = len(df["protein"].unique().tolist())
-    print("n_pdb_ids: {}, n_uniprot_ids: {}, n_proteins:{}".format(n_pdb_ids, n_uniprot_ids, n_proteins))
+    n_pdb_ids = len(df["pdb_id"].dropna().unique().tolist())
+    n_uniprot_ids = len(df["uniprot_id"].dropna().unique().tolist())
+    n_pubmed_ids = len(df["pubmed_id"].dropna().unique().tolist())
+    n_proteins = len(df["protein"].dropna().unique().tolist())
+    
+    print("n_pdb_ids: {}, n_uniprot_ids: {}, n_pubmed_ids:{}, n_proteins:{}".format(n_pdb_ids, n_uniprot_ids, n_pubmed_ids, n_proteins))
     
     n_destabilizing = df[df["ddg"]<-1.0].shape[0]
     n_destabilizing_hard = df[df["ddg"]<=-5.0].shape[0]
     print("n_destabilizing: {}, n_destabilizing_hard: {}".format(n_destabilizing, n_destabilizing_hard))
 
     n_neutral = df[(df["ddg"]<=1.0) & (df["ddg"]>=-1.0)].shape[0]
-    print("n_neutral:{}".format(n_neutral))
+    print("n_neutral: {}".format(n_neutral))
 
     n_stabilizing = df[df["ddg"]>1.0].shape[0]
     n_stabilizing_hard = df[df["ddg"]>=5.0].shape[0]
@@ -28,4 +30,5 @@ def print_class_distribution(df):
     print("#-mutations: {}".format(n_destabilizing+n_neutral+n_stabilizing))
     
 
-print_class_distribution(pd.read_csv("data/clean_1/ProThermDB.csv"))
+# print_class_distribution(pd.read_csv("data/clean_1/ProThermDB.csv"))
+print_class_distribution(pd.read_csv("data/clean_1/PON_TStab.csv"))
