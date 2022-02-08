@@ -28,10 +28,11 @@ class Ssym(object):
         mutation.pubmed_id = row.PubMed_ID
         mutation.protein = None
 
-        mutation.mutation_event = None
+        
         mutation.wild_residue = three_to_one(row.Wild_Type)
         mutation.mutation_site = int(row.Res_Num)
         mutation.mutant_residue = three_to_one(row.Mutant)
+        mutation.mutation_event = mutation.wild_residue+str(mutation.mutation_site)+mutation.mutant_residue
         
         mutation.ddg = self.__convert_to_float(row.ddg)
         mutation.ph = self.__convert_to_float(row.pH)
