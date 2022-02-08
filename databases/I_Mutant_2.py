@@ -4,15 +4,15 @@ sys.path.append("../mutation_analysis")
 import pandas as pd
 from databases.Mutation import Mutation
 
-class PON_TStab():
-    def __init__(self) -> None:
-        self.file_path = "data/downloaded_as/PON-TStab_dataset.xlsx"
+class I_Mutant_2(object):
+    def __init__(self, file_path) -> None:
+        self.file_path = file_path
         self.df = pd.read_excel(self.file_path)
-
+        # print(self.df.head())
 
     def get_mutations(self, row):
         mutation = Mutation()
-        mutation.pdb_id = row.PDB_in_Protherm
+        mutation.pdb_id = row.PDB
         mutation.chain_id = None
         mutation.mutation_event = row.Variation
         mutation.event_based_on = None
@@ -21,28 +21,47 @@ class PON_TStab():
         mutation.mutation_site = int(row.Variation[1:-1])
         mutation.ddg = float(row.ddG)
         mutation.ph = float(row.pH)
-        mutation.temp = float(row.T)
+        mutation.temp = float(row.Temperature)
         mutation.method = None
         mutation.source_file_path = self.file_path
-        mutation.source_id = row.Record_id
+        mutation.source_id = None
         mutation.source_row_index = row.Index
         mutation.uniprot_id = None
-        mutation.pubmed_id = row.Pubmed_id
+        mutation.pubmed_id = None
         mutation.extra_info = None
-        mutation.protein = row.protein_name
+        mutation.protein = None
         return [mutation]
 
 
-ponTStab = PON_TStab()
+i_Mutant_2_seq = I_Mutant_2("data/downloaded_as/I_Mutant2.0_seq_S2087.xlsx")
 n_rows_to_skip = 0
 n_rows_to_evalutate = 1000000
-out_file_path="data/clean_1/PON_TStab.csv"
+out_file_path="data/clean_1/I_Mutant_2_seq.csv"
 
-for row in ponTStab.df.itertuples():
+for row in i_Mutant_2_seq.df.itertuples():
     if row.Index+1 <= n_rows_to_skip: continue
     print(row.Index)
     
-    mutations = ponTStab.get_mutations(row)
+    mutations = i_Mutant_2_seq.get_mutations(row)
+    if mutations is not None:
+        for mutation in mutations:
+            if isinstance(mutation, Mutation): 
+                mutation.save(out_file_path)
+                
+    
+    if row.Index+1 == n_rows_to_skip+n_rows_to_evalutate: 
+        break
+
+i_Mutant_2_struct = I_Mutant_2("data/downloaded_as/I_Mutant2.0_S1948_structure.xlsx")
+n_rows_to_skip = 0
+n_rows_to_evalutate = 1000000
+out_file_path="data/clean_1/I_Mutant_2_structure.csv"
+
+for row in i_Mutant_2_struct.df.itertuples():
+    if row.Index+1 <= n_rows_to_skip: continue
+    print(row.Index)
+    
+    mutations = i_Mutant_2_struct.get_mutations(row)
     if mutations is not None:
         for mutation in mutations:
             if isinstance(mutation, Mutation): 
