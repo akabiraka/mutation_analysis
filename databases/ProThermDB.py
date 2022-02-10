@@ -3,36 +3,57 @@ sys.path.append("../mutation_analysis")
 import pandas as pd
 
 from databases.Mutation import Mutation
+from databases.I_Database import I_Database
 
-class ProThermDB(object):
-    def __init__(self) -> None:
-        self.file_path = "data/downloaded_as/ProThermDB_Oct_2021.tsv"
-        self.df = pd.read_csv(self.file_path, delimiter="\t")
+class ProThermDB(I_Database):
+    def __init__(self, inp_file_path, out_file_path) -> None:
+        self.inp_file_path = inp_file_path
+        df = pd.read_csv(self.inp_file_path, delimiter="\t")
+        super().__init__(df, out_file_path)
+        # print(self.df.head())
         
+    def validate_ddg(self, ddg):
+        if ddg == "-": return None
+        return float(ddg.split(" ")[0]) #case: -0.76 (0.9)
+
+    def validate_dtm(self, dtm):
+        if dtm == "-": return None
+        return float(dtm.split(" ")[0]) #case: 61.9 (0.4)
+
+    def validate_ph(self, ph):
+        if ph == "-": return None
+        return self.convert_to_float(ph)
+
+    def validate_temp(self, temp):
+        if temp == "-": return None
+        return self.convert_to_float(temp)
+    
 
     def __populate_general_info(self, mutation, mutation_event, row):
-        mutation.wild_residue = mutation_event[0]
-        mutation.mutant_residue = mutation_event[-1]
-        mutation.mutation_site = int(mutation_event[1:-1])
-        mutation.mutation_event = mutation.wild_residue+"_"+str(mutation.mutation_site)+"_"+mutation.mutant_residue
-
-        mutation.event_based_on = row.MUTATION.split("(")[1].rstrip()[8:-1]
-        mutation.method = row.METHOD
         mutation.pdb_id = row.PDB_wild
-        if row.pH != "-": mutation.ph = float(row.pH)
-        if row.T_C != "-": mutation.temp = float(row.T_C)
-        
-        mutation.ddg = float(row.ddg.split(" ")[0]) #case: -0.76 (0.9)
-        
-        mutation.extra_info = row.MUTATION+","+row.PDB_Chain_Mutation
-        mutation.protein = row.PROTEIN
-
-        mutation.source_file_path = self.file_path
-        mutation.source_id = row.NO
-        mutation.source_row_index = row.Index
         mutation.uniprot_id = row.UniProt_ID
         mutation.pubmed_id = row.PubMed_ID
+        mutation.protein = row.PROTEIN
 
+        mutation.wild_residue, mutation.mutation_site, mutation.mutant_residue = self.parse_mutation_event(mutation_event)
+        mutation.mutation_event = mutation.wild_residue+str(mutation.mutation_site)+mutation.mutant_residue
+
+        mutation.ddg = self.validate_ddg(row.ddg)
+        mutation.dtm = self.validate_dtm(row.dtm)
+        mutation.ph = self.validate_ph(row.pH)
+        mutation.temp = self.validate_temp(row.T_C)
+
+        mutation.inverse_pdb_id = None
+        mutation.inverse_chain_id = None
+
+        mutation.method = row.METHOD
+        mutation.event_based_on = row.MUTATION.split("(")[1].rstrip()[8:-1]
+        
+        mutation.source_file_path = self.inp_file_path
+        mutation.source_id = row.NO
+        mutation.source_row_index = row.Index
+
+        mutation.extra_info = row.MUTATION+","+row.PDB_Chain_Mutation
         return mutation
 
 
@@ -74,7 +95,7 @@ class ProThermDB(object):
 
             for mutation_event in mutation_events:
                 mutation_event = mutation_event.rstrip()
-            
+                
                 mutation = Mutation()
                 colon_idx, underscore_idx = mutation_event.find(":"), mutation_event.find("_")
                 if colon_idx < underscore_idx: #1yri:A_L42A
@@ -89,22 +110,7 @@ class ProThermDB(object):
         
         return mutations
         
-
-proThermDB = ProThermDB()
-n_rows_to_skip = 0
-n_rows_to_evalutate = 1000000
+inp_file_path = "data/downloaded_as/ProThermDB_Oct_2021.tsv"
 out_file_path="data/clean_1/ProThermDB.csv"
-
-for row in proThermDB.df.itertuples():
-    if row.Index+1 <= n_rows_to_skip: continue
-    # print(row.Index)
-    
-    mutations = proThermDB.get_mutations(row)
-    if mutations is not None:
-        for mutation in mutations:
-            if isinstance(mutation, Mutation): 
-                mutation.save(out_file_path)
-                
-    
-    if row.Index+1 == n_rows_to_skip+n_rows_to_evalutate: 
-        break
+proThermDB = ProThermDB(inp_file_path, out_file_path)
+proThermDB.run(0, 100000)
