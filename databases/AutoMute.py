@@ -51,7 +51,7 @@ out_file_path = "data/clean_1/AUTOMUTE_S1925.csv"
 
 automute = AutoMute(inp_file_path)
 n_rows_to_skip = 0
-n_rows_to_evalutate = 1000000
+n_rows_to_evalutate = 100#@0000
 
 for row in automute.df.itertuples():
     if row.Index+1 <= n_rows_to_skip: continue

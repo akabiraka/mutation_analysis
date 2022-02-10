@@ -41,44 +41,32 @@ class Mutation(object):
         
         self.extra_info = None
 
+    def __get_data_dict(self):
+        return {"pdb_id":self.pdb_id, 
+                "chain_id":self.chain_id,
+                "uniprot_id":self.uniprot_id, 
+                "pubmed_id": self.pubmed_id, 
+                "protein": self.protein,
+                "mutation_event":self.mutation_event, 
+                "wild_residue": self.wild_residue, 
+                "mutation_site": self.mutation_site, 
+                "mutant_residue": self.mutant_residue,
+                "ddg": self.ddg, 
+                "dtm": self.dtm,
+                "ph": self.ph, 
+                "temp": self.temp, 
+                "inverse_pdb_id": self.inverse_pdb_id,
+                "inverse_chain_id": self.inverse_chain_id,
+                "method": self.method, 
+                "event_based_on": self.event_based_on,
+                "source_file_path": self.source_file_path, 
+                "source_id": self.source_id, 
+                "source_row_index":self.source_row_index, 
+                "extra_info": self.extra_info}
+                
 
     def __str__(self):
-        return "pdb_id={}, \
-                chain_id={},\
-                uniprot_id={}, \
-                pubmed_id={}, \
-                protein={}, \
-                mutation_event={}, \
-                ddg={}, \
-                dtm={}, \
-                ph={}, \
-                temp(c)={}, \
-                inverse_pdb_id={}, \
-                inverse_chain_id={}, \
-                method={}, \
-                event_based_on={}, \
-                source_file_path={}, \
-                source_id={}, \
-                source_row_index={}, \
-                extra_info={}".format(
-                    self.pdb_id,
-                    self.chain_id,
-                    self.uniprot_id,
-                    self.pubmed_id,
-                    self.protein,
-                    self.mutation_event, 
-                    self.ddg, 
-                    self.dtm,
-                    self.ph, 
-                    self.temp, 
-                    self.inverse_pdb_id,
-                    self.inverse_chain_id,
-                    self.method, 
-                    self.event_based_on,
-                    self.source_file_path,
-                    self.source_id, 
-                    self.source_row_index, 
-                    self.extra_info)
+        return str(self.__get_data_dict())
     
 
     def __get_out_df(self, out_file_path):
@@ -94,27 +82,7 @@ class Mutation(object):
                             & (out_df["temp"]==self.temp) & (out_df["method"]==self.method)
 
         if out_df[check_unique_mask].size == 0:
-            data_dict = {"pdb_id":self.pdb_id, 
-                        "chain_id":self.chain_id,
-                        "uniprot_id":self.uniprot_id, 
-                        "pubmed_id": self.pubmed_id, 
-                        "protein": self.protein,
-                        "mutation_event":self.mutation_event, 
-                        "wild_residue": self.wild_residue, 
-                        "mutation_site": self.mutation_site, 
-                        "mutant_residue": self.mutant_residue,
-                        "ddg": self.ddg, 
-                        "dtm": self.dtm,
-                        "ph": self.ph, 
-                        "temp": self.temp, 
-                        "inverse_pdb_id": self.inverse_pdb_id,
-                        "inverse_chain_id": self.inverse_chain_id,
-                        "method": self.method, 
-                        "event_based_on": self.event_based_on,
-                        "source_file_path": self.source_file_path, 
-                        "source_id": self.source_id, 
-                        "source_row_index":self.source_row_index, 
-                        "extra_info": self.extra_info}
+            data_dict = self.__get_data_dict()
             # print(data_dict)
             out_df = out_df.append(data_dict, ignore_index=True)
             out_df.to_csv(out_file_path, index=False)
