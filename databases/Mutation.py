@@ -115,8 +115,8 @@ class Mutation(object):
                         "source_id": self.source_id, 
                         "source_row_index":self.source_row_index, 
                         "extra_info": self.extra_info}
-            
+            # print(data_dict)
             out_df = out_df.append(data_dict, ignore_index=True)
             out_df.to_csv(out_file_path, index=False)
-            print(out_df.shape)
+            # print(out_df.shape)
 

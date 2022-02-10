@@ -3,9 +3,11 @@ sys.path.append("../mutation_analysis")
 
 import pandas as pd
 from databases.Mutation import Mutation
+from databases.I_Database import I_Database
 
-class FireProtDB(object):
+class FireProtDB(I_Database):
     def __init__(self, file_path) -> None:
+        super().__init__()
         self.file_path = file_path
         self.df = pd.read_csv(self.file_path)
         # print(self.df.head())
@@ -13,7 +15,7 @@ class FireProtDB(object):
     def get_mutations(self, row):
         mutation = Mutation()
         mutation.pdb_id = row.pdb_id
-        mutation.chain_id = row.chain
+        mutation.chain_id = self.validate_chain(row.chain)
         mutation.uniprot_id = row.uniprot_id
         mutation.pubmed_id = row.publication_pubmed
         mutation.protein = row.protein_name
@@ -23,11 +25,11 @@ class FireProtDB(object):
         mutation.mutant_residue = row.mutation
         mutation.mutation_event = mutation.wild_residue + str(mutation.mutation_site) + mutation.mutant_residue
         
-        mutation.ddg = float(row.ddG)
-        mutation.dtm = float(row.dTm)
-        mutation.ph = float(row.pH)
-        mutation.temp = float(row.tm)
-
+        mutation.ddg = self.validate_ddg(row.ddG)
+        mutation.dtm = self.validate_dtm(row.dTm)
+        mutation.ph = self.validate_ph(row.pH)
+        mutation.temp = self.validate_temp(row.tm)
+        
         mutation.inverse_pdb_id = None
         mutation.inverse_chain_id = None
 
@@ -39,6 +41,7 @@ class FireProtDB(object):
         mutation.source_row_index = row.Index
         
         mutation.extra_info = None
+        # print(mutation)
         return [mutation]
 
 
@@ -47,7 +50,7 @@ out_file_path = "data/clean_1/FireProtDB.csv"
 
 fireProtDB = FireProtDB(inp_file_path)
 n_rows_to_skip = 0
-n_rows_to_evalutate = 1000000
+n_rows_to_evalutate = 1000#000
 
 for row in fireProtDB.df.itertuples():
     if row.Index+1 <= n_rows_to_skip: continue
