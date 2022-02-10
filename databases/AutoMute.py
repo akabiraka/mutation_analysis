@@ -6,11 +6,16 @@ from databases.Mutation import Mutation
 from databases.I_Database import I_Database
 
 class AutoMute(I_Database):
-    def __init__(self, file_path) -> None:
-        super().__init__()
-        self.file_path = file_path
-        self.df = pd.read_excel(self.file_path)
+    def __init__(self, inp_file_path, out_file_path) -> None:
+        self.inp_file_path = inp_file_path
+        df = pd.read_excel(self.inp_file_path)
+        super().__init__(df, out_file_path)
         # print(self.df.head())
+
+    def validate_chain(self, chain):
+        # from AutoMute
+        if chain=="@": return None
+        else: return chain
 
     def get_mutations(self, row):
         mutation = Mutation()
@@ -34,7 +39,7 @@ class AutoMute(I_Database):
         mutation.method = None
         mutation.event_based_on = None
 
-        mutation.source_file_path = self.file_path
+        mutation.source_file_path = self.inp_file_path
         mutation.source_id = None
         mutation.source_row_index = row.Index
         
@@ -49,19 +54,5 @@ out_file_path = "data/clean_1/AUTOMUTE_S1925.csv"
 # inp_file_path = "data/downloaded_as/AUTOMUTE_S1962.xlsx"
 # out_file_path = "data/clean_1/AUTOMUTE_S1962.csv"
 
-automute = AutoMute(inp_file_path)
-n_rows_to_skip = 0
-n_rows_to_evalutate = 100#@0000
-
-for row in automute.df.itertuples():
-    if row.Index+1 <= n_rows_to_skip: continue
-    print(row.Index)
-    
-    mutations = automute.get_mutations(row)
-    if mutations is not None:
-        for mutation in mutations:
-            if isinstance(mutation, Mutation): 
-                mutation.save(out_file_path)
-                
-    if row.Index+1 == n_rows_to_skip+n_rows_to_evalutate: 
-        break
+automute = AutoMute(inp_file_path, out_file_path)
+automute.run(0, 1)

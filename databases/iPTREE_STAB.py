@@ -3,11 +3,13 @@ sys.path.append("../mutation_analysis")
 
 import pandas as pd
 from databases.Mutation import Mutation
+from databases.I_Database import I_Database
 
-class iPTREE_STAB(object):
-    def __init__(self, file_path) -> None:
-        self.file_path = file_path
-        self.df = pd.read_excel(self.file_path)
+class iPTREE_STAB(I_Database):
+    def __init__(self, inp_file_path, out_file_path) -> None:
+        self.inp_file_path = inp_file_path
+        df = pd.read_excel(self.inp_file_path)
+        super().__init__(df, out_file_path)
         # print(self.df.head())
 
     def get_mutations(self, row):
@@ -18,15 +20,15 @@ class iPTREE_STAB(object):
         mutation.pubmed_id = None
         mutation.protein = None
 
-        mutation_event = row.Variation
-        mutation.mutation_event = mutation_event
-        mutation.wild_residue = mutation_event[0]
-        mutation.mutation_site = int(mutation_event[1:-1])
-        mutation.mutant_residue = mutation_event[-1]
         
-        mutation.ddg = float(row.ddG)
-        mutation.ph = float(row.pH)
-        mutation.temp = float(row.T)
+        mutation.mutation_event = self.validate_mutation(mutation.pdb_id, row.Variation)
+        mutation.wild_residue, mutation.mutation_site, mutation.mutant_residue = self.parse_mutation_event(mutation.mutation_event)
+        
+        mutation.ddg = self.validate_ddg(row.ddG)
+        mutation.dtm = None
+        mutation.ph = self.validate_ph(row.pH)
+        mutation.temp = self.validate_temp(row.T)
+        
 
         mutation.inverse_pdb_id = None
         mutation.inverse_chain_id = None
@@ -34,7 +36,7 @@ class iPTREE_STAB(object):
         mutation.method = None
         mutation.event_based_on = None
 
-        mutation.source_file_path = self.file_path
+        mutation.source_file_path = self.inp_file_path
         mutation.source_id = None
         mutation.source_row_index = row.Index
         
@@ -45,19 +47,5 @@ class iPTREE_STAB(object):
 inp_file_path = "data/downloaded_as/iPTREE-STAB_S1859.xlsx"
 out_file_path = "data/clean_1/iPTREE_STAB.csv"
 
-iptree_stab = iPTREE_STAB(inp_file_path)
-n_rows_to_skip = 0
-n_rows_to_evalutate = 1000000
-
-for row in iptree_stab.df.itertuples():
-    if row.Index+1 <= n_rows_to_skip: continue
-    print(row.Index)
-    
-    mutations = iptree_stab.get_mutations(row)
-    if mutations is not None:
-        for mutation in mutations:
-            if isinstance(mutation, Mutation): 
-                mutation.save(out_file_path)
-                
-    if row.Index+1 == n_rows_to_skip+n_rows_to_evalutate: 
-        break
+iptree_stab = iPTREE_STAB(inp_file_path, out_file_path)
+iptree_stab.run(0, 100000)

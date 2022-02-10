@@ -2,16 +2,16 @@ import sys
 sys.path.append("../mutation_analysis")
 
 from abc import ABC, abstractmethod
+from databases.Mutation import Mutation
 
 class I_Database(ABC):
+    def __init__(self, df, out_file_path) -> None:
+        self.df = df
+        self.out_file_path = out_file_path
 
-    def init(self) -> None:
-        super().init()
 
     def validate_chain(self, chain):
-        # from AutoMute
-        if chain=="@": return None
-        else: return chain
+        return chain
 
     def convert_to_float(self, x):
         try:
@@ -22,21 +22,16 @@ class I_Database(ABC):
                 return float(x[:comma_idx]+"."+x[comma_idx+1:])
 
     def validate_ddg(self, ddg):
-        if ddg=="'-": return float("nan")
-        if type(ddg)==str and ddg[0]=="'": return self.convert_to_float(ddg[1:])
-        else: return self.convert_to_float(ddg)
+        return self.convert_to_float(ddg)
 
     def validate_dtm(self, dtm):
         return self.convert_to_float(dtm)
 
-
     def validate_ph(self, ph):
         return self.convert_to_float(ph)
-
     
     def validate_temp(self, temp):
         return self.convert_to_float(temp)
-
 
     def parse_mutation_event(self, mutation_event):
         return mutation_event[0], int(mutation_event[1:-1]), mutation_event[-1]
@@ -47,6 +42,8 @@ class I_Database(ABC):
         if pdb=="1LVE" and mutation_event=="V27BL":
             return mutation_event[0]+"29"+mutation_event[-1]
         elif pdb=="1LVE" and mutation_event=="L27CQ":
+            return mutation_event[0]+"30"+mutation_event[-1]
+        elif pdb=="1LVE" and mutation_event=="L27CN":
             return mutation_event[0]+"30"+mutation_event[-1]
         elif pdb == "1LVE" and mutation_event=="Y27DD":
             return mutation_event[0]+"31"+mutation_event[-1]
@@ -63,6 +60,20 @@ class I_Database(ABC):
             return mutation_event[0]+"2"+mutation_event[-1]
         else:
             return mutation_event
+
+    def run(self, n_rows_to_skip, n_rows_to_evalutate):
+        for row in self.df.itertuples():
+            if row.Index+1 <= n_rows_to_skip: continue
+            print(row.Index)
+            
+            mutations = self.get_mutations(row)
+            if mutations is not None:
+                for mutation in mutations:
+                    if isinstance(mutation, Mutation): 
+                        mutation.save(self.out_file_path)
+                        
+            if row.Index+1 == n_rows_to_skip+n_rows_to_evalutate: 
+                break
 
 
     def get_mutations(self, row):

@@ -6,11 +6,12 @@ from databases.Mutation import Mutation
 from databases.I_Database import I_Database
 
 class FireProtDB(I_Database):
-    def __init__(self, file_path) -> None:
-        super().__init__()
-        self.file_path = file_path
-        self.df = pd.read_csv(self.file_path)
+    def __init__(self, inp_file_path, out_file_path) -> None:
+        self.inp_file_path = inp_file_path
+        df = pd.read_csv(self.inp_file_path)
+        super().__init__(df, out_file_path)
         # print(self.df.head())
+
 
     def get_mutations(self, row):
         mutation = Mutation()
@@ -36,7 +37,7 @@ class FireProtDB(I_Database):
         mutation.method = row.method
         mutation.event_based_on = None
 
-        mutation.source_file_path = self.file_path
+        mutation.source_file_path = self.inp_file_path
         mutation.source_id = row.experiment_id
         mutation.source_row_index = row.Index
         
@@ -48,19 +49,5 @@ class FireProtDB(I_Database):
 inp_file_path = "data/downloaded_as/FireProtDB.csv"
 out_file_path = "data/clean_1/FireProtDB.csv"
 
-fireProtDB = FireProtDB(inp_file_path)
-n_rows_to_skip = 0
-n_rows_to_evalutate = 1000#000
-
-for row in fireProtDB.df.itertuples():
-    if row.Index+1 <= n_rows_to_skip: continue
-    print(row.Index)
-    
-    mutations = fireProtDB.get_mutations(row)
-    if mutations is not None:
-        for mutation in mutations:
-            if isinstance(mutation, Mutation): 
-                mutation.save(out_file_path)
-                
-    if row.Index+1 == n_rows_to_skip+n_rows_to_evalutate: 
-        break
+fireProtDB = FireProtDB(inp_file_path, out_file_path)
+fireProtDB.run(0, 1000)
