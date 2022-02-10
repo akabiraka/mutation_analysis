@@ -42,6 +42,7 @@ def print_class_distribution(df):
 # print_class_distribution(pd.read_csv("data/clean_1/iPTREE_STAB.csv"))
 # print_class_distribution(pd.read_csv("data/clean_1/AUTOMUTE_S1925.csv"))
 # print_class_distribution(pd.read_csv("data/clean_1/AUTOMUTE_S1962.csv"))
-print_class_distribution(pd.read_csv("data/clean_1/Broom.csv"))
+# print_class_distribution(pd.read_csv("data/clean_1/Broom.csv"))
+print_class_distribution(pd.read_csv("data/clean_1/ThermoMutDB_single.csv"))
 
 
