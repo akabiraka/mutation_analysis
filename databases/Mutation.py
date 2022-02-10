@@ -7,7 +7,7 @@ class Mutation(object):
     def __init__(self) -> None:
         self.cols = ["pdb_id", "chain_id", "uniprot_id", "pubmed_id", "protein",
                     "mutation_event", "wild_residue", "mutation_site", "mutant_residue",
-                    "ddg", "ph", "temp", 
+                    "ddg", "dtm", "ph", "temp", 
                     "inverse_pdb_id", "inverse_chain_id",
                     "method", "event_based_on", 
                     "source_file_path", "source_id", "source_row_index", 
@@ -25,6 +25,7 @@ class Mutation(object):
         self.mutant_residue = None
         
         self.ddg = None
+        self.dtm = None
         self.ph = None
         self.temp = None
 
@@ -49,6 +50,7 @@ class Mutation(object):
                 protein={}, \
                 mutation_event={}, \
                 ddg={}, \
+                dtm={}, \
                 ph={}, \
                 temp(c)={}, \
                 inverse_pdb_id={}, \
@@ -66,6 +68,7 @@ class Mutation(object):
                     self.protein,
                     self.mutation_event, 
                     self.ddg, 
+                    self.dtm,
                     self.ph, 
                     self.temp, 
                     self.inverse_pdb_id,
@@ -101,6 +104,7 @@ class Mutation(object):
                         "mutation_site": self.mutation_site, 
                         "mutant_residue": self.mutant_residue,
                         "ddg": self.ddg, 
+                        "dtm": self.dtm,
                         "ph": self.ph, 
                         "temp": self.temp, 
                         "inverse_pdb_id": self.inverse_pdb_id,
