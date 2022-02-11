@@ -1,6 +1,6 @@
 import sys
 sys.path.append("../mutation_analysis")
-
+import math
 import pandas as pd
 from databases.Mutation import Mutation
 from databases.I_Database import I_Database
@@ -14,6 +14,8 @@ class Saraboji(I_Database):
 
 
     def get_mutations(self, row):
+        if type(row.PDB)!=str and math.isnan(row.PDB): return
+
         mutation = Mutation()
         mutation.pdb_id = row.PDB
         mutation.chain_id = None
@@ -40,14 +42,16 @@ class Saraboji(I_Database):
         mutation.source_row_index = row.Index
         
         mutation.extra_info = None
+        # print(mutation)
         return [mutation]
 
 
-# inp_file_path = "data/downloaded_as/Saraboji_S1396.xlsx"
-# out_file_path = "data/clean_1/Saraboji_S1396.csv"
+inp_file_path = "data/downloaded_as/Saraboji_S1396.xlsx"
+out_file_path = "data/clean_1/Saraboji_S1396.csv"
+saraboji = Saraboji(inp_file_path, out_file_path)
+saraboji.run(0, 100000)
 
 inp_file_path = "data/downloaded_as/Saraboji_S2204.xlsx"
 out_file_path = "data/clean_1/Saraboji_S2204.csv"
-
 saraboji = Saraboji(inp_file_path, out_file_path)
 saraboji.run(0, 10000)

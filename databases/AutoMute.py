@@ -2,6 +2,7 @@ import sys
 sys.path.append("../mutation_analysis")
 
 import pandas as pd
+import math
 from databases.Mutation import Mutation
 from databases.I_Database import I_Database
 
@@ -18,6 +19,9 @@ class AutoMute(I_Database):
         else: return chain
 
     def get_mutations(self, row):
+        if math.isnan(row.ddG): return
+        # if row.ddG == None: return 
+
         mutation = Mutation()
         mutation.pdb_id = row.PDB
         mutation.chain_id = self.validate_chain(row.chain)
@@ -50,9 +54,10 @@ class AutoMute(I_Database):
 
 inp_file_path = "data/downloaded_as/AUTOMUTE_S1925.xlsx"
 out_file_path = "data/clean_1/AUTOMUTE_S1925.csv"
-
-# inp_file_path = "data/downloaded_as/AUTOMUTE_S1962.xlsx"
-# out_file_path = "data/clean_1/AUTOMUTE_S1962.csv"
-
 automute = AutoMute(inp_file_path, out_file_path)
-automute.run(0, 1)
+automute.run(0, 10000)
+
+inp_file_path = "data/downloaded_as/AUTOMUTE_S1962.xlsx"
+out_file_path = "data/clean_1/AUTOMUTE_S1962.csv"
+automute = AutoMute(inp_file_path, out_file_path)
+automute.run(0, 10000)

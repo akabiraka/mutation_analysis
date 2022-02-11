@@ -31,7 +31,7 @@ def print_class_distribution(df):
     print("#-mutations: {}".format(n_destabilizing+n_neutral+n_stabilizing))
     
 
-print_class_distribution(pd.read_csv("data/clean_1/ProThermDB.csv"))
+# print_class_distribution(pd.read_csv("data/clean_1/ProThermDB.csv"))
 # print_class_distribution(pd.read_csv("data/clean_1/PON_TStab.csv"))
 # print_class_distribution(pd.read_csv("data/clean_1/I_Mutant_2_seq.csv"))
 # print_class_distribution(pd.read_csv("data/clean_1/I_Mutant_2_structure.csv"))
@@ -40,9 +40,11 @@ print_class_distribution(pd.read_csv("data/clean_1/ProThermDB.csv"))
 # print_class_distribution(pd.read_csv("data/clean_1/Saraboji_S1396.csv"))
 # print_class_distribution(pd.read_csv("data/clean_1/Saraboji_S2204.csv"))
 # print_class_distribution(pd.read_csv("data/clean_1/iPTREE_STAB.csv"))
+# print_class_distribution(pd.read_csv("data/clean_1/ThermoMutDB_single.csv"))
 # print_class_distribution(pd.read_csv("data/clean_1/AUTOMUTE_S1925.csv"))
 # print_class_distribution(pd.read_csv("data/clean_1/AUTOMUTE_S1962.csv"))
 # print_class_distribution(pd.read_csv("data/clean_1/Broom.csv"))
-# print_class_distribution(pd.read_csv("data/clean_1/ThermoMutDB_single.csv"))
+print_class_distribution(pd.read_csv("data/clean_1/FireProtDB.csv"))
+
 
 

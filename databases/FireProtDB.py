@@ -1,6 +1,7 @@
 import sys
 sys.path.append("../mutation_analysis")
 
+import math
 import pandas as pd
 from databases.Mutation import Mutation
 from databases.I_Database import I_Database
@@ -14,6 +15,8 @@ class FireProtDB(I_Database):
 
 
     def get_mutations(self, row):
+        if math.isnan(row.ddG): return
+
         mutation = Mutation()
         mutation.pdb_id = row.pdb_id
         mutation.chain_id = self.validate_chain(row.chain)
@@ -50,4 +53,4 @@ inp_file_path = "data/downloaded_as/FireProtDB.csv"
 out_file_path = "data/clean_1/FireProtDB.csv"
 
 fireProtDB = FireProtDB(inp_file_path, out_file_path)
-fireProtDB.run(0, 1000)
+fireProtDB.run(0, 100000)

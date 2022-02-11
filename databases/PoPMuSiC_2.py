@@ -46,4 +46,4 @@ class PoPMuSiC_2(I_Database):
 inp_file_path = "data/downloaded_as/PoPMuSiC-2.0_S2648.xlsx"
 out_file_path = "data/clean_1/PoPMuSiC_2.csv"
 poPMuSiC_2 = PoPMuSiC_2(inp_file_path, out_file_path)
-poPMuSiC_2.run(1300, 100000)
+poPMuSiC_2.run(0, 100000)

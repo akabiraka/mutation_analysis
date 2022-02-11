@@ -18,7 +18,6 @@ class ThermoMuteDB_Single(I_Database):
         else: return float(temp) - 273.15#converting to Celsius
 
     def validate_ddg(self, ddg):
-        if ddg=="'-": return float("nan")
         if type(ddg)==str and ddg[0]=="'": return self.convert_to_float(ddg[1:])
         else: return self.convert_to_float(ddg)
 
@@ -29,6 +28,9 @@ class ThermoMuteDB_Single(I_Database):
 
 
     def get_mutations(self, row):
+        if row.ddG=="'-": return
+        if row.PDB=="'-" and row.Reference == None: return
+
         mutation = Mutation()
         mutation.pdb_id = row.PDB
         mutation.chain_id = None
