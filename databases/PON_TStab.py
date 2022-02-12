@@ -1,6 +1,6 @@
 import sys
 sys.path.append("../mutation_analysis")
-
+import math
 import pandas as pd
 from databases.Mutation import Mutation
 from databases.I_Database import I_Database
@@ -14,6 +14,9 @@ class PON_TStab(I_Database):
 
 
     def get_mutations(self, row):
+        if math.isnan(row.ddG): return
+        if type(row.PDB_in_Protherm) != str and math.isnan(row.PDB_in_Protherm): return
+        
         mutation = Mutation()
 
         mutation.pdb_id = row.PDB_in_Protherm

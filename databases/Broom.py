@@ -44,7 +44,7 @@ class Broom(I_Database):
 
 
 inp_file_path = "data/downloaded_as/Broom_S605.xlsx"
-out_file_path = "data/clean_1/Broom.csv"
+out_file_path = "data/clean_1/Broom_S605.csv"
 
 broom = Broom(inp_file_path, out_file_path)
 broom.run(0, 100000)

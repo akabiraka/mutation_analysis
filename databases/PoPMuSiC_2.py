@@ -1,6 +1,6 @@
 import sys
 sys.path.append("../mutation_analysis")
-
+import math
 import pandas as pd
 from databases.Mutation import Mutation
 from databases.I_Database import I_Database
@@ -14,8 +14,10 @@ class PoPMuSiC_2(I_Database):
 
 
     def get_mutations(self, row):
+        if math.isnan(row.ddG): return 
+
         mutation = Mutation()
-        mutation.pdb_id = row.PDB[:-1]
+        mutation.pdb_id = str(row.PDB[:-1])
         mutation.chain_id = self.validate_chain(row.CHAIN)
         mutation.uniprot_id = None
         mutation.pubmed_id = None
