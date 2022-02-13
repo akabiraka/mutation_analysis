@@ -163,12 +163,12 @@ class Mutation(object):
 
     def save(self, out_file_path):
         out_df = self.__get_out_df(out_file_path)
-        if math.isnan(self.temp):
-            check_unique_mask = (out_df["pdb_id"]==self.pdb_id) & (out_df["mutation_event"]==self.mutation_event) & (out_df["ddg"]==self.ddg) & (out_df["ph"]==self.ph)
-        elif math.isnan(self.ph): 
-            check_unique_mask = (out_df["pdb_id"]==self.pdb_id) & (out_df["mutation_event"]==self.mutation_event) & (out_df["ddg"]==self.ddg) & (out_df["temp"]==self.temp)
-        elif math.isnan(self.temp) and math.isnan(self.ph):
+        if (self.temp==None or math.isnan(self.temp)) and (self.ph==None or math.isnan(self.ph)):
             check_unique_mask = (out_df["pdb_id"]==self.pdb_id) & (out_df["mutation_event"]==self.mutation_event) & (out_df["ddg"]==self.ddg)
+        elif self.temp==None or math.isnan(self.temp):
+            check_unique_mask = (out_df["pdb_id"]==self.pdb_id) & (out_df["mutation_event"]==self.mutation_event) & (out_df["ddg"]==self.ddg) & (out_df["ph"]==self.ph)
+        elif self.ph==None or math.isnan(self.ph): 
+            check_unique_mask = (out_df["pdb_id"]==self.pdb_id) & (out_df["mutation_event"]==self.mutation_event) & (out_df["ddg"]==self.ddg) & (out_df["temp"]==self.temp)
         else: 
             check_unique_mask = (out_df["pdb_id"]==self.pdb_id) & (out_df["mutation_event"]==self.mutation_event) & (out_df["ddg"]==self.ddg) & (out_df["ph"]==self.ph) & (out_df["temp"]==self.temp)
         

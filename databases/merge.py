@@ -25,4 +25,4 @@ def append_non_redundent_mutation(inp_file_path):
     print("n_mutation_appened: {}".format(n_mutation_appened))
     print("n_mutation_updated: {}".format(n_mutation_updated))
     print("n_already_exists: {}".format(df.shape[0] - n_mutation_appened - n_mutation_updated))
-append_non_redundent_mutation("data/clean_1/Broom_S605.csv")
+append_non_redundent_mutation("data/clean_1/ThermoMutDB_single.csv")

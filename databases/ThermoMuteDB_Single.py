@@ -29,7 +29,7 @@ class ThermoMuteDB_Single(I_Database):
 
     def get_mutations(self, row):
         if row.ddG=="'-": return
-        if row.PDB=="'-" and row.Reference == None: return
+        if row.PDB=="'-": return
 
         mutation = Mutation()
         mutation.pdb_id = row.PDB

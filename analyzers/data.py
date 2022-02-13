@@ -14,7 +14,7 @@ def print_class_distribution(df):
     n_proteins = len(df["protein"].dropna().unique().tolist())
     n_inv_pdb_ids = len(df["inverse_pdb_id"].dropna().unique().tolist())
     
-    print("n_pdb_ids: {}, n_uniprot_ids: {}, n_pubmed_ids:{}, n_proteins:{}, n_inv_pdb_ids:{}".format(n_pdb_ids, n_uniprot_ids, n_pubmed_ids, n_proteins, n_inv_pdb_ids))
+    print("n_pdb_ids: {}, n_uniprot_ids: {}, n_pubmed_ids: {}, n_proteins: {}, n_inv_pdb_ids: {}".format(n_pdb_ids, n_uniprot_ids, n_pubmed_ids, n_proteins, n_inv_pdb_ids))
     
     n_destabilizing = df[df["ddg"]<-1.0].shape[0]
     n_destabilizing_hard = df[df["ddg"]<=-5.0].shape[0]
@@ -46,9 +46,9 @@ def print_class_distribution(df):
 # print_class_distribution(pd.read_csv("data/clean_1/AUTOMUTE_S1962.csv"))
 # print_class_distribution(pd.read_csv("data/clean_1/Broom.csv"))
 # print_class_distribution(pd.read_csv("data/clean_1/ThermoMutDB_single.csv"))
-# print_class_distribution(pd.read_csv("data/clean_1/FireProtDB.csv"))
+print_class_distribution(pd.read_csv("data/clean_1/FireProtDB.csv"))
 # print_class_distribution(pd.read_csv("data/clean_1/ProThermDB.csv"))
-print_class_distribution(pd.read_csv("data/merged.csv"))
+# print_class_distribution(pd.read_csv("data/merged.csv"))
 
 
 
