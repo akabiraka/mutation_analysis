@@ -15,6 +15,7 @@ class FireProtDB(I_Database):
 
 
     def get_mutations(self, row):
+        if row.pdb_id == None: return
         if math.isnan(row.ddG): return
 
         mutation = Mutation()

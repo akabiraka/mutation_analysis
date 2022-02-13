@@ -6,7 +6,7 @@ import pandas as pd
 
 def print_class_distribution(df):
     n_mutation_rows = df.shape[0]
-    print("#-mutations: {}".format(n_mutation_rows))
+    print("n_mutations_direct: {}".format(n_mutation_rows))
 
     n_pdb_ids = len(df["pdb_id"].dropna().unique().tolist())
     n_uniprot_ids = len(df["uniprot_id"].dropna().unique().tolist())
@@ -25,10 +25,10 @@ def print_class_distribution(df):
 
     n_stabilizing = df[df["ddg"]>1.0].shape[0]
     n_stabilizing_hard = df[df["ddg"]>=5.0].shape[0]
-    print("n_stabilizing: {}, n_stabilizing-hard: {}".format(n_stabilizing, n_stabilizing_hard))
+    print("n_stabilizing: {}, n_stabilizing_hard: {}".format(n_stabilizing, n_stabilizing_hard))
     
     
-    print("#-mutations: {}".format(n_destabilizing+n_neutral+n_stabilizing))
+    print("n_mutations_direct: {}".format(n_destabilizing+n_neutral+n_stabilizing))
 
     print("Contains nan value: \n{}".format(df[["pdb_id", "mutation_event", "ddg"]].isna().any()))
     
@@ -46,9 +46,9 @@ def print_class_distribution(df):
 # print_class_distribution(pd.read_csv("data/clean_1/AUTOMUTE_S1962.csv"))
 # print_class_distribution(pd.read_csv("data/clean_1/Broom.csv"))
 # print_class_distribution(pd.read_csv("data/clean_1/ThermoMutDB_single.csv"))
-print_class_distribution(pd.read_csv("data/clean_1/FireProtDB.csv"))
+# print_class_distribution(pd.read_csv("data/clean_1/FireProtDB.csv"))
 # print_class_distribution(pd.read_csv("data/clean_1/ProThermDB.csv"))
-# print_class_distribution(pd.read_csv("data/merged.csv"))
+print_class_distribution(pd.read_csv("data/merged.csv"))
 
 
 
