@@ -42,7 +42,7 @@ class ThermoMuteDB_Single(I_Database):
         mutation.wild_residue, mutation.mutation_site, mutation.mutant_residue = self.parse_mutation_event(mutation.mutation_event)
         
         mutation.ddg = self.validate_ddg(row.ddG)
-        mutation.dtm = self.validate_dtm(row.ddG)
+        mutation.dtm = self.validate_dtm(row.dtm)
         mutation.ph = self.validate_ph(row.pH)
         mutation.temp = self.validate_temp(row.T)
 
