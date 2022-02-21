@@ -3,7 +3,7 @@ sys.path.append("../mutation_analysis")
 import os
 import pandas as pd
 
-from databases.Mutation import Mutation
+from objects.Mutation import Mutation
 
 def append_non_redundent_mutation(inp_file_path):
     out_file_path = "data/merged.csv"

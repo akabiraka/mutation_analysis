@@ -2,7 +2,7 @@ import sys
 sys.path.append("../mutation_analysis")
 
 import pandas as pd
-from databases.Mutation import Mutation
+from objects.Mutation import Mutation
 from Bio.PDB.Polypeptide import three_to_one
 from databases.I_Database import I_Database
 

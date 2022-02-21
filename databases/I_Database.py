@@ -2,7 +2,7 @@ import sys
 sys.path.append("../mutation_analysis")
 
 from abc import ABC, abstractmethod
-from databases.Mutation import Mutation
+from objects.Mutation import Mutation
 
 class I_Database(ABC):
     def __init__(self, df, out_file_path) -> None:

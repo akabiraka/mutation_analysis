@@ -2,7 +2,7 @@ import sys
 sys.path.append("../mutation_analysis")
 import math
 import pandas as pd
-from databases.Mutation import Mutation
+from objects.Mutation import Mutation
 from databases.I_Database import I_Database
 
 class PoPMuSiC_2(I_Database):

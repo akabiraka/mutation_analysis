@@ -3,7 +3,7 @@ sys.path.append("../mutation_analysis")
 
 import pandas as pd
 import math
-from databases.Mutation import Mutation
+from objects.Mutation import Mutation
 from databases.I_Database import I_Database
 
 class AutoMute(I_Database):
