@@ -14,7 +14,7 @@ pdb_dir = "data/pdbs/"
 pdbs_clean_dir = "data/pdbs_clean/"
 fastas_dir = "data/fastas/"
 CIF = "mmCif"
-input_file_path = "data/dataset_5_train.csv"
+input_file_path = "data/clean_1/PoPMuSiC_2.csv"
 # input_file_path = "data/dataset_5_test.csv"
      
 # object initialization
@@ -36,7 +36,7 @@ def generate_mutant_pssm(mutant_fasta_file):
 
 
 def generate_pssm_for_ith_wild_fasta(i):
-    pdb_chain_ids = dfs["pdb_id"]+dfs["chain_id"]
+    pdb_chain_ids = dfs["pdb_id"].str.lower()+dfs["chain_id"]
     unique_pdb_chain_ids = pdb_chain_ids.drop_duplicates().to_list()
     unique_pdb_chain_ids.sort()
     print(len(unique_pdb_chain_ids))
@@ -47,7 +47,7 @@ def generate_pssm_for_ith_wild_fasta(i):
 
 
 def generate_pssm_for_ith_mutant_fasta(i):
-    pdb_chain_mutation_ids = dfs["pdb_id"]+dfs["chain_id"]+ "_" + dfs["mutation"]
+    pdb_chain_mutation_ids = dfs["pdb_id"].str.lower()+dfs["chain_id"]+ "_" + dfs["mutation_event"]
     pdb_chain_mutation_ids = pdb_chain_mutation_ids.drop_duplicates().to_list()
     pdb_chain_mutation_ids.sort()
     print(len(pdb_chain_mutation_ids))
