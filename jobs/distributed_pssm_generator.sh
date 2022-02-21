@@ -14,4 +14,4 @@
 #SBATCH --mem=8000MB
 
 #SBATCH --array=0-36
-python data_generators/distributed_pssm.py
+python generators/distributed_pssm.py

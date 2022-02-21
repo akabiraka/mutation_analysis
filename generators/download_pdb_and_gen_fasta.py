@@ -17,8 +17,8 @@ fastas_dir = "data/fastas/"
 CIF = "mmCif"
 
 input_file_path = "data/clean_1/PoPMuSiC_2.csv"
-n_rows_to_skip = 0
-n_rows_to_evalutate = 10#0000
+n_rows_to_skip = 2000
+n_rows_to_evalutate = 100000
 
 # object initialization
 pdbdata = PDBData(pdb_dir=pdb_dir)
@@ -31,6 +31,7 @@ for i, row in df.iterrows():
     # getting mutation object
     mut = Mutation().get_mutation(row)
     # print(mut)
+    # if mut.pdb_id == "2a01": continue # manually downloaded
   
     # creating necessary file paths
     cln_pdb_file = pdbs_clean_dir+mut.pdb_id+mut.chain_id+".pdb"
