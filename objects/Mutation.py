@@ -43,7 +43,7 @@ class Mutation(object):
         self.extra_info = None
 
     def get_mutation(self, row):
-        self.pdb_id = row.pdb_id.upper() if type(row.pdb_id)==str else row.pdb_id
+        self.pdb_id = row.pdb_id.lower() if type(row.pdb_id)==str else row.pdb_id
         self.chain_id = row.chain_id.upper() if type(row.chain_id)==str else row.chain_id
         self.uniprot_id = row.uniprot_id
         self.pubmed_id = row.pubmed_id
@@ -73,7 +73,7 @@ class Mutation(object):
         return self
 
     def __get_data_dict(self):
-        return {"pdb_id":self.pdb_id, 
+        return {"pdb_id":self.pdb_id.lower(), 
                 "chain_id":self.chain_id,
                 "uniprot_id":self.uniprot_id, 
                 "pubmed_id": self.pubmed_id, 

@@ -12,6 +12,7 @@ class CleanSlate(object):
         self.clean_all_files(mydir=data_root + "fastas/", ext=".fasta")
         self.clean_all_files(mydir=data_root + "pdbs/", ext=".cif")
         self.clean_all_files(mydir=data_root + "pdbs_clean/", ext=".pdb")
+        self.clean_all_files(mydir=data_root + "pssms/", ext=".pssm")
         
     def delete_file(self, filepath):
         if os.path.exists(filepath):
