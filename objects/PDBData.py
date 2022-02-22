@@ -45,6 +45,15 @@ class PDBData(object):
         structure = self.parser.get_structure("", pdb_file)[0]
         print(list(structure.get_chains()))
         return list(structure.get_chains())[0].id
+
+    def get_A_or_first_chain_id(self, pdb_id):
+        cln_pdb_file = self.pdb_dir + pdb_id + self.pdb_ext
+        structure = self.parser.get_structure("", cln_pdb_file)[0]
+        chain_ids = list(structure.get_chains())
+        print(chain_ids)
+        for chain_id in chain_ids:
+            if chain_id.id == "A": return "A"
+        return chain_ids[0].id
     
     def clean(self, pdb_id, chain_id, selector=None, clean_pdb_dir="data/pdbs_clean/"):
         """
@@ -237,7 +246,15 @@ class PDBData(object):
         
         return "".join(ss_types), "".join(sa_types), rasa_values
     
-    
+    def get_zero_based_mutation_site(self, cln_pdb_file, chain_id, mutation_site):
+        residue_ids_dict = self.get_residue_ids_dict(pdb_file=cln_pdb_file, chain_id=chain_id)
+        return residue_ids_dict.get(mutation_site)
+
+    def does_mutation_site_has_expected_residue(self, cln_pdb_file, chain_id, mutation_site, residue_name):
+        residue = PDBParser(QUIET=True).get_structure("", cln_pdb_file)[0][chain_id][mutation_site]
+        pdb_residue_name = Polypeptide.three_to_one(residue.get_resname())
+        return pdb_residue_name == residue_name, pdb_residue_name
+
 # def get_sa_type(rasa):
 #     if rasa<0.25: sa="B" # Buried
 #     elif rasa>0.5: sa="E" # Exposed
