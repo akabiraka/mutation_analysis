@@ -8,6 +8,9 @@ def print_class_distribution(df):
     n_mutation_rows = df.shape[0]
     print("n_mutations_direct: {}".format(n_mutation_rows))
 
+    n_unique_mutations = len((df["pdb_id"].str.lower()+df["chain_id"]+ "_" + df["mutation_event"]).dropna().unique().tolist())
+    print("n_unique_mutations: {}".format(n_unique_mutations))
+
     n_pdb_ids = len(df["pdb_id"].dropna().unique().tolist())
     n_uniprot_ids = len(df["uniprot_id"].dropna().unique().tolist())
     n_pubmed_ids = len(df["pubmed_id"].dropna().unique().tolist())
