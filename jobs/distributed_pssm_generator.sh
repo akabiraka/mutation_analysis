@@ -3,7 +3,7 @@
 ## this must be run from directory where run.py exists.
 ## --workdir is not used in this file.
 
-#SBATCH --job-name=wild
+#SBATCH --job-name=mutant
 #SBATCH --output=/scratch/akabir4/mutation_analysis/outputs/argo_logs/pssm-%N-%j.output
 #SBATCH --error=/scratch/akabir4/mutation_analysis/outputs/argo_logs/pssm-%N-%j.error
 #SBATCH --mail-user=<akabir4@gmu.edu>
@@ -13,5 +13,5 @@
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=8000MB
 
-#SBATCH --array=0-36
+#SBATCH --array=0-253
 python generators/distributed_pssm.py

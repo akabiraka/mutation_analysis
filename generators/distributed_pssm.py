@@ -14,7 +14,7 @@ pdb_dir = "data/pdbs/"
 pdbs_clean_dir = "data/pdbs_clean/"
 fastas_dir = "data/fastas/"
 CIF = "mmCif"
-input_file_path = "data/clean_1/PoPMuSiC_2.csv"
+input_file_path = "data/clean_2/DeepDDG_S276.csv"
 # input_file_path = "data/dataset_5_test.csv"
      
 # object initialization
@@ -68,8 +68,8 @@ def remove_ith_proteins_pssms(i):
     print("removing all pssms for {} ...".format(ith_pdb_id))
     run_command("rm -rf data/pssms/{}*".format(ith_pdb_id))
 
-# i = int(os.environ["SLURM_ARRAY_TASK_ID"]) 
-i=11
+i = int(os.environ["SLURM_ARRAY_TASK_ID"]) 
+# i=11
 # remove_ith_proteins_pssms(i)
 # generate_pssm_for_ith_wild_fasta(i)
 generate_pssm_for_ith_mutant_fasta(i)
