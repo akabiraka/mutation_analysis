@@ -219,32 +219,6 @@ class PDBData(object):
         residues = PDBParser(QUIET=True).get_structure("", pdb_file)[0][chain_id].get_residues()
         residue_ids_dict = {residue.id[1]:i for i, residue in enumerate(residues)}
         return residue_ids_dict
-
-    def get_ss_and_rasa_at_residue(self, pdb_id, chain_id, cln_pdb_file, residue_pos):
-        """ss:Secondary structure. rasa:Relative accessible surface area
-        """
-        model = PDBParser(QUIET=True).get_structure(pdb_id, cln_pdb_file)[0]
-        residue_id = model[chain_id][residue_pos].id
-        dssp = DSSP(model, cln_pdb_file, dssp="mkdssp")
-        ss = dssp[chain_id, residue_id][2]
-        rasa = dssp[chain_id, residue_id][3]
-        return ss, rasa
-
-    def get_full_ss_and_sa(self, pdb_id, chain_id, cln_pdb_file, ss_dict, sa_classification_func):
-        """sa: solvent accessibility, ss:Secondary structure
-        """
-        model = PDBParser(QUIET=True).get_structure(pdb_id, cln_pdb_file)[0]
-        dssp = DSSP(model, cln_pdb_file, dssp="mkdssp")
-        
-        ss_types, sa_types, rasa_values = [], [], []
-        for residue in model.get_residues():
-            if (chain_id, residue.id) in dssp.keys(): ss, rasa = dssp[chain_id, residue.id][2], dssp[chain_id, residue.id][3]
-            else: ss, rasa = "-", 0.5 # rasa=0.5 means intermediate, neither exposed nor buried
-            ss_types.append(ss_dict.get(ss))
-            sa_types.append(sa_classification_func(rasa))
-            rasa_values.append(rasa)
-        
-        return "".join(ss_types), "".join(sa_types), rasa_values
     
     def get_zero_based_mutation_site(self, cln_pdb_file, chain_id, mutation_site):
         residue_ids_dict = self.get_residue_ids_dict(pdb_file=cln_pdb_file, chain_id=chain_id)
@@ -255,12 +229,6 @@ class PDBData(object):
         pdb_residue_name = Polypeptide.three_to_one(residue.get_resname())
         return pdb_residue_name == residue_name, pdb_residue_name
 
-# def get_sa_type(rasa):
-#     if rasa<0.25: sa="B" # Buried
-#     elif rasa>0.5: sa="E" # Exposed
-#     else: sa="I" # Intermediate 
-#     return sa    
-# ss_dict={"H":"H", "G":"H", "I":"H", "B":"B", "E":"B", "T":"C", "S":"C", "-":"C"}
 
 # pdb_id="1h7m"    
 # chain_id="A"
