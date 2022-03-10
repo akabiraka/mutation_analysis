@@ -69,11 +69,11 @@ class SS_SA_RASA(object):
         else: return "".join(ss_types), "".join(sa_types), rasa_values
 
 
-pdb_id="1a0f"    
-chain_id="A"
-cln_pdb_file = "data/pdbs_clean/1a0fA.pdb"
-ss_sa_rasa = SS_SA_RASA()
-ss_types, sa_types, rasa_values = ss_sa_rasa.get_full_ss_and_sa(pdb_id, chain_id, cln_pdb_file, format="onehot")
+# pdb_id="1a0f"    
+# chain_id="A"
+# cln_pdb_file = "data/pdbs_clean/1a0fA.pdb"
+# ss_sa_rasa = SS_SA_RASA()
+# ss_types, sa_types, rasa_values = ss_sa_rasa.get_full_ss_and_sa(pdb_id, chain_id, cln_pdb_file, format="onehot")
 # print(ss_types)
-print(sa_types)
+# print(sa_types)
 # print(rasa_values)

@@ -1,7 +1,29 @@
 # Mutation Analysis
 
 #### Feature generation
+
 * **Download and clean**: `python generators/download_pdb_and_gen_fasta.py`
+* **Static amino acid descriptor** (finish later):
+  | Descriptor                   | Source |
+  | ---------------------------- | ------ |
+  | AA_FORMAL_CHARGE             | URL    |
+  | NORMALIZED_VAN_DER_WAALS_VOL | URL    |
+* **Distance**:
+  * Sample usage:
+    * Remove the commented line at the end of the file.
+    * Run: `python features/Distance.py`
+* **Orientation**:
+  * The angles are in [-pi, pi].
+  * Dihedral angles (phi, psi, omega):
+    * Use the two links ([url1](https://biopython.org/docs/dev/api/Bio.PDB.internal_coords.html#Bio.PDB.internal_coords.IC_Residue.pick_angle), [url2](https://biopython.org/docs/latest/api/Bio.PDB.vectors.html?highlight=calc_dihedral#Bio.PDB.vectors.calc_dihedral)) to compute phi, psi and omega angels.
+      * (sC, nN, nCA, nC)   # phi i+1
+      * (sN, sCA, sC, nN)   # psi
+      * (sCA, sC, nN, nCA)  # omega i+1
+  * Planer angle:
+    * Use SCONES 2021 Figure 4: (sCA, sCB, nCB, nCA)
+  * Sample usage:
+    * Remove the commented line at the end of the file.
+    * Run: `python features/Orientation.py`
 * **PSSM generation**:
   * Based on wild and mutant sequences.
   * PSI-Blast setup:
@@ -29,7 +51,6 @@
       * To create blast-db from fasta sequences:
         * `3rd_party_items/ncbi-blast-2.12.0+/bin/makeblastdb -dbtype prot -in path/4eiuA.fasta -input_type fasta -out path_to_save/db_name`
         * `3rd_party_items/ncbi-blast-2.12.0+/bin/makeblastdb -dbtype prot -in 3rd_party_items/rp-seqs-15.fasta -input_type fasta -out 3rd_party_items/rp_req_15/rp_req_15`
-
 * **Secondary structure (SS), solvent accessibility (SA), relative accessible surface area (RASA) using DSSP module**
   * Bases on wild-type protein structure.
   * Install DSSP: `sudo apt install dssp`
@@ -42,5 +63,6 @@
     * `features/SS_SA_RASA.py`
 
 #### Analyzers
+
 * To see the distribution of any mutation data file:
-    * `python analyzers/data.py`
+  * `python analyzers/data.py`
