@@ -1,13 +1,9 @@
 import sys
-
-from numpy import mat
 sys.path.append("../mutation_analysis")
 
-import math
 import pandas as pd
 from objects.PDBData import PDBData
 from objects.Selector import ChainAndAminoAcidSelect
-import generators.utils as Utils
 from objects.Mutation import Mutation
 
 # configurations
@@ -16,9 +12,9 @@ pdbs_clean_dir = "data/pdbs_clean/"
 fastas_dir = "data/fastas/"
 CIF = "mmCif"
 
-inp_file_path = "data/clean_1/DeepDDG_S276.csv"
-out_file_path = "data/clean_2/DeepDDG_S276.csv"
-n_rows_to_skip = 0
+inp_file_path = "data/clean_1/PoPMuSiC_2.csv"
+out_file_path = "data/clean_2/PoPMuSiC_2.csv"
+n_rows_to_skip = 2070
 n_rows_to_evalutate = 100000
 
 # object initialization
@@ -26,7 +22,7 @@ pdbdata = PDBData(pdb_dir=pdb_dir)
 
 df = pd.read_csv(inp_file_path)
 
-def integrat_chain_id(pdb_id, chain_id):
+def integrate_chain_id(pdb_id, chain_id):
     if type(chain_id)==str and len(chain_id)==1: return chain_id
 
     # these are in DeepDDG_test_276 set
@@ -47,7 +43,7 @@ for i, row in df.iterrows():
     pdbdata.download_structure(pdb_id=mut.pdb_id)
 
     # updating chain_id
-    mut.chain_id = integrat_chain_id(mut.pdb_id, mut.chain_id)
+    mut.chain_id = integrate_chain_id(mut.pdb_id, mut.chain_id)
     df.loc[i, "chain_id"] = mut.chain_id
   
     # creating necessary file paths
@@ -59,13 +55,14 @@ for i, row in df.iterrows():
     pdbdata.clean(pdb_id=mut.pdb_id, chain_id=mut.chain_id, selector=ChainAndAminoAcidSelect(mut.chain_id))
 
     # checking if mutation site has expected residue in PDB and specified chain
-    flag, pdb_residue_name = pdbdata.does_mutation_site_has_expected_residue(cln_pdb_file, mut.chain_id, mut.mutation_site, mut.wild_residue)
+    flag, pdb_residue_name = pdbdata.does_mutation_site_has_expected_residue(cln_pdb_file, mut.chain_id, mut.mutation_residue_id, mut.wild_residue)
     if not flag: 
-        print(mut)
+        print("Specified mutation is not present.")
+        mut.print_self()
         print(pdb_residue_name)
         break
     
-    zero_based_mutation_site = pdbdata.get_zero_based_mutation_site(cln_pdb_file, mut.chain_id, mut.mutation_site)
+    zero_based_mutation_site = pdbdata.get_zero_based_mutation_site(cln_pdb_file, mut.chain_id, mut.mutation_residue_id)
     print("Row no:{}->{}{}, mutation:{}, 0-based_mutaiton_site:{}".format(i+1, mut.pdb_id, mut.chain_id, mut.mutation_event, zero_based_mutation_site))
 
     # generating wild and mutant fasta file

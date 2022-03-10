@@ -217,15 +217,15 @@ class PDBData(object):
     
     def get_residue_ids_dict(self, pdb_file, chain_id):
         residues = PDBParser(QUIET=True).get_structure("", pdb_file)[0][chain_id].get_residues()
-        residue_ids_dict = {residue.id[1]:i for i, residue in enumerate(residues)}
+        residue_ids_dict = {residue.id:i for i, residue in enumerate(residues)}
         return residue_ids_dict
     
-    def get_zero_based_mutation_site(self, cln_pdb_file, chain_id, mutation_site):
+    def get_zero_based_mutation_site(self, cln_pdb_file, chain_id, mutation_residue_id):
         residue_ids_dict = self.get_residue_ids_dict(pdb_file=cln_pdb_file, chain_id=chain_id)
-        return residue_ids_dict.get(mutation_site)
+        return residue_ids_dict.get(mutation_residue_id)
 
-    def does_mutation_site_has_expected_residue(self, cln_pdb_file, chain_id, mutation_site, residue_name):
-        residue = PDBParser(QUIET=True).get_structure("", cln_pdb_file)[0][chain_id][mutation_site]
+    def does_mutation_site_has_expected_residue(self, cln_pdb_file, chain_id, mutation_residue_id, residue_name):
+        residue = PDBParser(QUIET=True).get_structure("", cln_pdb_file)[0][chain_id][mutation_residue_id]
         pdb_residue_name = Polypeptide.three_to_one(residue.get_resname())
         return pdb_residue_name == residue_name, pdb_residue_name
 
