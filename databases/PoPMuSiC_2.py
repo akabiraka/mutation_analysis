@@ -23,9 +23,11 @@ class PoPMuSiC_2(I_Database):
         mutation.pubmed_id = None
         mutation.protein = None
 
-        mutation.mutation_event = self.validate_mutation(mutation.pdb_id, row.Variation)
-        mutation.wild_residue, mutation.mutation_site, mutation.mutant_residue = self.parse_mutation_event(mutation.mutation_event)
-    
+        
+        mutation.mutation_event = row.Variation
+        # mutation.wild_residue, mutation.mutation_site, mutation.mutant_residue = self.parse_mutation_event(mutation.mutation_event, self.has_insertion_code(mutation.pdb_id, row.Variation))
+        mutation.wild_residue, mutation.hetero_flag, mutation.mutation_site, mutation.insertion_code, mutation.mutant_residue = self.parse_mutation_event(mutation.mutation_event)
+
         mutation.ddg = self.validate_ddg(row.ddG)
         mutation.dtm = None
         mutation.ph = self.validate_ph(row.pH)

@@ -1,4 +1,5 @@
 import sys
+from tkinter.tix import Tree
 sys.path.append("../mutation_analysis")
 
 from abc import ABC, abstractmethod
@@ -34,32 +35,43 @@ class I_Database(ABC):
         return self.convert_to_float(temp)
 
     def parse_mutation_event(self, mutation_event):
-        return mutation_event[0], int(mutation_event[1:-1]), mutation_event[-1]
+        wild_residue, mutation_site, mutant_residue = mutation_event[0], mutation_event[1:-1], mutation_event[-1]
+        if mutation_site.isdigit():
+            hetero_flag = " "
+            insertion_code = " "
+            mutation_site = int(mutation_site)    
+        elif mutation_site[:-1].isdigit():
+            hetero_flag = " "
+            insertion_code = mutation_site[-1]
+            mutation_site = int(mutation_site[:-1])
+        elif mutation_site.startswith("H_") or mutation_site.startswith("W"):
+            raise NotImplementedError()
+        return wild_residue, hetero_flag, mutation_site, insertion_code, mutant_residue
 
-
-    def validate_mutation(self, pdb, mutation_event):
+    @DeprecationWarning
+    def has_insertion_code(self, pdb, mutation_event):
         # based on PoPMuSiC_2, Saraboji
         if pdb=="1LVE" and mutation_event=="V27BL":
-            return mutation_event[0]+"29"+mutation_event[-1]
+            return True
         elif pdb=="1LVE" and mutation_event=="L27CQ":
-            return mutation_event[0]+"30"+mutation_event[-1]
+            return True
         elif pdb=="1LVE" and mutation_event=="L27CN":
-            return mutation_event[0]+"30"+mutation_event[-1]
+            return True
         elif pdb == "1LVE" and mutation_event=="Y27DD":
-            return mutation_event[0]+"31"+mutation_event[-1]
+            return True
         # based on ThermoMuteDB_single
         if pdb=="1C9O" and mutation_event=="L67AL":
-            return mutation_event[0]+"66"+mutation_event[-1]
+            return True
         elif pdb=="1C9O" and mutation_event=="L66LA":
-            return mutation_event[0]+"66"+mutation_event[-1]
+            return True
         elif pdb=="1IMQ" and mutation_event=="T27TG":
-            return mutation_event[0]+"27"+mutation_event[-1]
-        elif pdb=="'-" and mutation_event=="AVIG":
-            return mutation_event[0]+"6"+mutation_event[-1]
-        elif pdb=="'-" and mutation_event=="AIIG":
-            return mutation_event[0]+"2"+mutation_event[-1]
+            return True
+        # elif pdb=="'-" and mutation_event=="AVIG":
+        #     return mutation_event[0]+"6"+mutation_event[-1]
+        # elif pdb=="'-" and mutation_event=="AIIG":
+        #     return mutation_event[0]+"2"+mutation_event[-1]
         else:
-            return mutation_event
+            return False
 
     def run(self, n_rows_to_skip, n_rows_to_evalutate):
         for row in self.df.itertuples():

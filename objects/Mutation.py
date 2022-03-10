@@ -7,7 +7,7 @@ import math
 class Mutation(object):
     def __init__(self) -> None:
         self.cols = ["pdb_id", "chain_id", "uniprot_id", "pubmed_id", "protein",
-                    "mutation_event", "wild_residue", "mutation_site", "mutant_residue",
+                    "mutation_event", "wild_residue", "hetero_flag", "mutation_site", "insertion_code", "mutant_residue",
                     "ddg", "dtm", "ph", "temp", 
                     "inverse_pdb_id", "inverse_chain_id",
                     "method", "event_based_on", 
@@ -22,7 +22,9 @@ class Mutation(object):
 
         self.mutation_event = None
         self.wild_residue = None
+        self.hetero_flag = " "
         self.mutation_site = None
+        self.insertion_code = " "
         self.mutant_residue = None
         
         self.ddg = None
@@ -51,8 +53,11 @@ class Mutation(object):
 
         self.mutation_event = row.mutation_event
         self.wild_residue = row.wild_residue
+        self.hetero_flag = row.hetero_flag
         self.mutation_site = row.mutation_site
+        self.insertion_code = row.insertion_code
         self.mutant_residue = row.mutant_residue
+        self.mutation_residue_id = (row.hetero_flag, row.mutation_site, row.insertion_code)
 
         self.ddg = row.ddg
         self.dtm = row.dtm
@@ -80,7 +85,9 @@ class Mutation(object):
                 "protein": self.protein,
                 "mutation_event":self.mutation_event, 
                 "wild_residue": self.wild_residue, 
+                "hetero_flag": self.hetero_flag,
                 "mutation_site": self.mutation_site, 
+                "insertion_code": self.insertion_code,
                 "mutant_residue": self.mutant_residue,
                 "ddg": self.ddg, 
                 "dtm": self.dtm,
@@ -98,6 +105,10 @@ class Mutation(object):
 
     def __str__(self):
         return str(self.__get_data_dict())
+
+    def print_self(self):
+        print(str(self.__get_data_dict()))
+        print("mutation_residue_id:", self.mutation_residue_id)
     
 
     def __get_out_df(self, out_file_path):
