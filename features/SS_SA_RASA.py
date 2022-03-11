@@ -29,11 +29,11 @@ class SS_SA_RASA(object):
         return ss_onehot, sa_onehot, rasa
 
 
-    def get_ss_and_rasa_at_residue(self, pdb_id, chain_id, cln_pdb_file, residue_pos):
+    def get_ss_and_rasa_at_residue(self, cln_pdb_file, chain_id, residue_id):
         """ss:Secondary structure. rasa:Relative accessible surface area
         """
-        model = PDBParser(QUIET=True).get_structure(pdb_id, cln_pdb_file)[0]
-        residue_id = model[chain_id][residue_pos].id
+        model = PDBParser(QUIET=True).get_structure("", cln_pdb_file)[0]
+        residue_id = (" ", residue_id[1], residue_id[2]) #removed the hetero-flag 
         dssp = DSSP(model, cln_pdb_file, dssp="mkdssp")
         ss = dssp[chain_id, residue_id][2]
         rasa = dssp[chain_id, residue_id][3]
@@ -45,10 +45,10 @@ class SS_SA_RASA(object):
         else: sa="I" # Intermediate 
         return sa   
 
-    def get_full_ss_and_sa(self, pdb_id, chain_id, cln_pdb_file, format="onehot"):
+    def get_full_ss_and_sa(self, cln_pdb_file, chain_id, format="onehot"):
         """sa: solvent accessibility, ss:Secondary structure
         """
-        model = PDBParser(QUIET=True).get_structure(pdb_id, cln_pdb_file)[0]
+        model = PDBParser(QUIET=True).get_structure("", cln_pdb_file)[0]
         dssp = DSSP(model, cln_pdb_file, dssp="mkdssp")
         
         ss_types, sa_types, rasa_values = [], [], []
@@ -69,11 +69,10 @@ class SS_SA_RASA(object):
         else: return "".join(ss_types), "".join(sa_types), rasa_values
 
 
-# pdb_id="1a0f"    
-# chain_id="A"
-# cln_pdb_file = "data/pdbs_clean/1a0fA.pdb"
-# ss_sa_rasa = SS_SA_RASA()
-# ss_types, sa_types, rasa_values = ss_sa_rasa.get_full_ss_and_sa(pdb_id, chain_id, cln_pdb_file, format="onehot")
+ss_sa_rasa = SS_SA_RASA()
+ss, sasa = ss_sa_rasa.get_ss_and_rasa_at_residue("data/pdbs_clean/3ecaA.pdb", "A", ('H_ASP', 401, ' '))
+print(ss, sasa)
+# ss_types, sa_types, rasa_values = ss_sa_rasa.get_full_ss_and_sa("data/pdbs_clean/1a0fA.pdb", "A", format="onehot")
 # print(ss_types)
 # print(sa_types)
 # print(rasa_values)

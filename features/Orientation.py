@@ -7,14 +7,14 @@ class Orientation(object):
     def __init__(self) -> None:
         pass
 
-    def __get_residues(self, pdb_file:str, chain_id:str, central_residue_id:int, neighbor_residue_id:int):
+    def __get_residues(self, pdb_file, chain_id, center_residue_id, neighbor_residue_id):
         residues = PDBParser(QUIET=True).get_structure("", pdb_file)[0][chain_id]
-        central_residue = residues[central_residue_id]
+        central_residue = residues[center_residue_id]
         neighbor_residue = residues[neighbor_residue_id]
         return central_residue, neighbor_residue
 
 
-    def get_dihedral_angles(self, pdb_file:str, chain_id:str, central_residue_id:int, neighbor_residue_id:int):
+    def get_dihedral_angles(self, pdb_file, chain_id, center_residue_id, neighbor_residue_id):
         """used the following two links to compute phi, psi and omega angels
         https://biopython.org/docs/dev/api/Bio.PDB.internal_coords.html#Bio.PDB.internal_coords.IC_Residue.pick_angle
         https://biopython.org/docs/latest/api/Bio.PDB.vectors.html?highlight=calc_dihedral#Bio.PDB.vectors.calc_dihedral
@@ -24,7 +24,7 @@ class Orientation(object):
         The angles are in [-pi, pi]
         """
 
-        central_residue, neighbor_residue = self.__get_residues(pdb_file, chain_id, central_residue_id, neighbor_residue_id)
+        central_residue, neighbor_residue = self.__get_residues(pdb_file, chain_id, center_residue_id, neighbor_residue_id)
 
         sN, sCA, sC = central_residue["N"].get_vector(), central_residue["CA"].get_vector(), central_residue["C"].get_vector()
         nN, nCA, nC = neighbor_residue["N"].get_vector(), neighbor_residue["CA"].get_vector(), neighbor_residue["C"].get_vector()
@@ -36,7 +36,7 @@ class Orientation(object):
         return phi, psi, omega
 
 
-    def get_planar_angle(self, pdb_file:str, chain_id:str, central_residue_id:int, neighbor_residue_id:int):
+    def get_planar_angle(self, pdb_file, chain_id, central_residue_id, neighbor_residue_id):
         """Uses SCONES, 2021 Figure 4.
         """
         central_residue, neighbor_residue = self.__get_residues(pdb_file, chain_id, central_residue_id, neighbor_residue_id)
