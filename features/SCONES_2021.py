@@ -3,7 +3,6 @@ sys.path.append("../mutation_analysis")
 
 from Bio.PDB.Polypeptide import three_to_one
 import numpy as np
-import pandas as pd
 from Bio.PDB import PDBParser
 
 import features.static as STATIC
@@ -12,16 +11,10 @@ from features.Distance import Distance
 from features.Orientation import Orientation
 
 class SCONES(object):
-    def __init__(self, computed_features_file="data/computed_features/SCONES_features_on_PoPMuSiC_2.csv") -> None:
+    def __init__(self) -> None:
         self.ss_sa_rasa = SS_SA_RASA()
         self.distance = Distance()
         self.orentation = Orientation()
-        self.computed_features_file = computed_features_file
-
-    def print_features_statistics(self):
-        df = pd.read_csv(self.computed_features_file, header=None)
-        stat_df = df.describe().transpose()
-        stat_df.to_csv("data/computed_features/SCONES_features_on_PoPMuSiC_2_statistics.csv", index=False)
         
 
     def get_all_features(self, cln_pdb_file, chain_id, center_residue_id, neighbor_residue_id, central_residue_atom="CB", neighbor_residue_atom="CB"):
@@ -69,8 +62,7 @@ class SCONES(object):
     
 
 
-scones = SCONES()
-scones.print_features_statistics()
+# scones = SCONES()
 # scones.get_distance_features("data/pdbs_clean/1lveA.pdb", "A", (" ", 5, " "), (" ", 4, " "), "CB", "CB")
 # scones.get_orientation_features("data/pdbs_clean/1lveA.pdb", "A", (" ", 5, " "), (" ", 4, " "))
 # scones.edge_features("data/pdbs_clean/1lveA.pdb", "A", (" ", 5, " "), (" ", 4, " "), "CB", "CB")
