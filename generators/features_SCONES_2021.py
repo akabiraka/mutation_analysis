@@ -15,7 +15,7 @@ fastas_dir = "data/fastas/"
 CIF = "mmCif"
 
 inp_file_path = "data/clean_2/PoPMuSiC_2.csv"
-out_file_path = "SCONES_features_on_PoPMuSiC_2.csv"
+out_file_path = "data/computed_features/SCONES_features_on_PoPMuSiC_2.csv"
 n_rows_to_skip = 1018
 n_rows_to_evalutate = 100000
 

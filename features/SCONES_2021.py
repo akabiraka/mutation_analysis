@@ -18,9 +18,10 @@ class SCONES(object):
         self.orentation = Orientation()
         self.computed_features_file = computed_features_file
 
-    def computed_features(self):
+    def print_features_statistics(self):
         df = pd.read_csv(self.computed_features_file, header=None)
-        print(df.describe())
+        stat_df = df.describe().transpose()
+        stat_df.to_csv("data/computed_features/SCONES_features_on_PoPMuSiC_2_statistics.csv", index=False)
         
 
     def get_all_features(self, cln_pdb_file, chain_id, center_residue_id, neighbor_residue_id, central_residue_atom="CB", neighbor_residue_atom="CB"):
@@ -68,7 +69,8 @@ class SCONES(object):
     
 
 
-# scones = SCONES()
+scones = SCONES()
+scones.print_features_statistics()
 # scones.get_distance_features("data/pdbs_clean/1lveA.pdb", "A", (" ", 5, " "), (" ", 4, " "), "CB", "CB")
 # scones.get_orientation_features("data/pdbs_clean/1lveA.pdb", "A", (" ", 5, " "), (" ", 4, " "))
 # scones.edge_features("data/pdbs_clean/1lveA.pdb", "A", (" ", 5, " "), (" ", 4, " "), "CB", "CB")

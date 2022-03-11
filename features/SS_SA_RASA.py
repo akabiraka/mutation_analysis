@@ -69,9 +69,9 @@ class SS_SA_RASA(object):
         else: return "".join(ss_types), "".join(sa_types), rasa_values
 
 
-ss_sa_rasa = SS_SA_RASA()
-ss, sasa = ss_sa_rasa.get_ss_and_rasa_at_residue("data/pdbs_clean/3ecaA.pdb", "A", ('H_ASP', 401, ' '))
-print(ss, sasa)
+# ss_sa_rasa = SS_SA_RASA()
+# ss, sasa = ss_sa_rasa.get_ss_and_rasa_at_residue("data/pdbs_clean/3ecaA.pdb", "A", ('H_ASP', 401, ' '))
+# print(ss, sasa)
 # ss_types, sa_types, rasa_values = ss_sa_rasa.get_full_ss_and_sa("data/pdbs_clean/1a0fA.pdb", "A", format="onehot")
 # print(ss_types)
 # print(sa_types)
