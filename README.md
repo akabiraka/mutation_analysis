@@ -66,3 +66,5 @@
 
 * To see the distribution of any mutation data file:
   * `python analyzers/data.py`
+* To see the distribution of the features:
+  * `python analyzers/features_statistics.py`
