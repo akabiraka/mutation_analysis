@@ -63,6 +63,7 @@ class PSSM(object):
         """
         if pssm_file is None:
             pssm_file = self.__get_pssm_file()
+
         col_names = pd.read_csv(pssm_file, delim_whitespace=True, header=None, skiprows=[0, 1], nrows=1)
         col_names = col_names.loc[0, 0:19].tolist()
         residue_dict = {key: i for i, key in enumerate(col_names)}
@@ -73,15 +74,31 @@ class PSSM(object):
         return df, residue_dict
 
    
-    def get_logodds(self, i):
+    def get_logodds(self, i, pssm_file=None):
         """First 20 columns gives the log-odds value of each amino-acid at each position.
         """
-        df, residue_dict = self.parse_pssm_output_file()
+        df, residue_dict = self.parse_pssm_output_file(pssm_file)
         # print(df.head())
         log_odds = np.array(df.loc[i, 2:21], dtype=np.float32)
         # print(log_odds)
         value = log_odds[residue_dict[df.loc[i, 1]]]
         return np.array([value])
+
+    def get_neighbor_logodds(self, i, neighbors, pssm_file=None):
+        df, residue_dict = self.parse_pssm_output_file(pssm_file)
+        seq_len = df.shape[0]
+
+        features = []
+        if i-int(neighbors/2) < 0:
+            for j in range(0, neighbors):
+                features.append(np.array(df.loc[i+j, 2:21], dtype=np.float32))
+        elif i+int(neighbors/2) > (seq_len-1):
+            for j in range(seq_len-neighbors, seq_len):
+                features.append(np.array(df.loc[j, 2:21], dtype=np.float32))
+        else: 
+            for j in range(-int(neighbors/2), int(neighbors/2)+1):
+                features.append(np.array(df.loc[i+j, 2:21], dtype=np.float32))
+        return np.array(features)
 
 
     def get_avg_logodds(self, i, neighbors):

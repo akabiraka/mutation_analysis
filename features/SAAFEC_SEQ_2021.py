@@ -7,7 +7,7 @@ class SAAFEC_SEQ(object):
     def __init__(self) -> None:
         self.pssm = PSSM()
 
-    def compute_pseudo_PSSM(self, pssm_file, window_size=7):
+    def get_pseudo_PSSM(self, pssm_file, window_size=7):
         """_summary_
 
         Args:
@@ -31,5 +31,13 @@ class SAAFEC_SEQ(object):
         features = np.hstack([P_bars, pseudo_features]) #shape: 20+20xwindow_size
         return features
 
+
+    def get_neighbor_conservation_scores(self, pssm_file, zero_based_mutation_site, window_size=7):
+        features = self.pssm.get_neighbor_logodds(i=zero_based_mutation_site, neighbors=window_size, pssm_file=pssm_file) #shape: 20xwindow_size=140
+        features = np.hstack(features)
+        return features
+
+
 saafec_seq = SAAFEC_SEQ()
-saafec_seq.compute_pseudo_PSSM("data/pssms_s2648_wild/1a5eA.pssm")
+saafec_seq.get_pseudo_PSSM("data/pssms_s2648_wild/1a5eA.pssm")
+saafec_seq.get_neighbor_conservation_scores("data/pssms_s2648_wild/1a5eA.pssm", 0, 7)
