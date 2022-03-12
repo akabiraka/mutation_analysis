@@ -84,21 +84,61 @@ class PSSM(object):
         value = log_odds[residue_dict[df.loc[i, 1]]]
         return np.array([value])
 
-    def get_neighbor_logodds(self, i, neighbors, pssm_file=None):
+    def get_neighbor_logodds(self, i, neighbors=3, pssm_file=None):
+        """If the neighbors <0 or >=seq_len, it will start at 0 or end at seq_len.
+        This does not guarantee mutation site's features will be on the middle.
+
+        Args:
+            i (int): Mutation site
+            neighbors (int, optional): How many neighbors on both sides of i to consider. Defaults to 7.
+            pssm_file (str, optional): File path. Defaults to None.
+
+        Returns:
+            nparray: [2*neighbors+1, 20]
+        """
         df, residue_dict = self.parse_pssm_output_file(pssm_file)
         seq_len = df.shape[0]
 
         features = []
-        if i-int(neighbors/2) < 0:
-            for j in range(0, neighbors):
+        if i-neighbors < 0:
+            for j in range(0, 2*neighbors+1):
                 features.append(np.array(df.loc[i+j, 2:21], dtype=np.float32))
-        elif i+int(neighbors/2) > (seq_len-1):
-            for j in range(seq_len-neighbors, seq_len):
+        elif i+neighbors >= seq_len:
+            for j in range(seq_len-2*neighbors+1, seq_len):
                 features.append(np.array(df.loc[j, 2:21], dtype=np.float32))
         else: 
-            for j in range(-int(neighbors/2), int(neighbors/2)+1):
+            for j in range(-neighbors, neighbors+1):
                 features.append(np.array(df.loc[i+j, 2:21], dtype=np.float32))
         return np.array(features)
+
+    def get_neighbor_logodds_by_mutation_site_in_middle(self, i, neighbors=3, pssm_file=None):
+        """If the neighbors <0 or >=seq_len, will be padded with 0's.
+        This guarantees mutation site's features will be on the middle.
+
+        Args:
+            i (int): mutation site
+            neighbors (int, optional): How many neighbors on both sides of i to consider. Defaults to 3.
+            pssm_file (str, optional): File path. Defaults to None.
+
+        Returns:
+            ndarray: [2*neighbors+1, 20]
+        """
+        df, residue_dict = self.parse_pssm_output_file(pssm_file)
+        seq_len = df.shape[0]
+
+        features = []
+        for j in range(neighbors, 0, -1): #3, 2, 1
+            if i-j<0: features.append(np.zeros((20), dtype=np.float32))
+            else: features.append(np.array(df.loc[i-j, 2:21], dtype=np.float32))
+        
+        # mutation site features will always be on the middle
+        features.append(np.array(df.loc[i, 2:21], dtype=np.float32))
+        
+        for j in range(1, neighbors+1): #1, 2, 3
+            if i+j>=seq_len: features.append(np.zeros((20), dtype=np.float32))
+            else: features.append(np.array(df.loc[i+j, 2:21], dtype=np.float32))
+
+        return features
 
 
     def get_avg_logodds(self, i, neighbors):
