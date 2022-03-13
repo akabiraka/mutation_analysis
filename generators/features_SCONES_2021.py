@@ -3,7 +3,6 @@ sys.path.append("../mutation_analysis")
 
 import numpy as np
 import pandas as pd
-from objects.PDBData import PDBData
 from objects.Mutation import Mutation
 from objects.NeighborResidueSelection import NeighborResidueSelection
 from features.SCONES_2021 import SCONES
@@ -11,9 +10,6 @@ from features.SCONES_2021 import SCONES
 # configurations
 pdb_dir = "data/pdbs/"
 pdbs_clean_dir = "data/pdbs_clean/"
-fastas_dir = "data/fastas/"
-CIF = "mmCif"
-
 inp_file_path = "data/clean_2/PoPMuSiC_2.csv"
 out_file_path = "data/computed_features/SCONES_features_on_PoPMuSiC_2.csv"
 n_rows_to_skip = 1018

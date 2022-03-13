@@ -68,3 +68,5 @@
   * `python analyzers/data.py`
 * To see the distribution of the features:
   * `python analyzers/features_statistics.py`
+* To analyze the WaveEncoding which is same as positional encoding:
+  * `python analyzers/encoding.py`

@@ -46,13 +46,38 @@ class SAAFEC_SEQ(object):
                                     "R":"C", "N":"C", "D":"C", "Q":"C", "E":"C", "K":"C"}
         self.hydrophobicity_change_types = {"".join(x):i+1 for i, x in enumerate(itertools.product("ABC", "ABC"))} #range(1, 9+1)
 
+    def get_all_features(self, pssm_file, fasta_file, i, wild_res, mut_res, window_size=7, n_neighbors=3, smooth=True):
+        """
+        Args:
+            pssm_file (str): file path
+            fasta_file (str): file path
+            i (int): zero based mutation site
+            wild_res (char): wild residue
+            mut_res (char): mutant residue
+            window_size (int, optional): For pseudo PSSM features. Defaults to 7.
+            n_neighbors (int, optional): For conservation and seq neighbor features. Defaults to 3.
+            smooth (bool, optional): The encoding type. Defaults to True.
+        Returns:
+            ndarray: 1D. 20+(20*window_size) + (20*(2*n_neighbors+1)) + [(2*n_neighbors+1)*20] + 8
+            For default values: 20+(20*7) + (20*(2*3+1)) + ((2*3+1)*20) + 8 = 160 + 140 + 140 + 8 = 448
+        """
+        pseudo_PSSM = self.get_pseudo_PSSM(pssm_file, window_size)
+        conservation_scores = self.get_neighbor_conservation_scores(pssm_file, i, n_neighbors)
+        seq_neighbor_features = self.get_seq_neighbor_features(fasta_file, i, n_neighbors, smooth)
+        physiochemical_prop = self.get_physiochemical_properties_at_mutation_site(wild_res, mut_res)
+        print(pseudo_PSSM.shape, conservation_scores.shape, seq_neighbor_features.shape, physiochemical_prop.shape)
+        features = np.hstack([pseudo_PSSM, conservation_scores, seq_neighbor_features, physiochemical_prop])
+        # print(features.shape, features)
+        return features
+
+
     def get_pseudo_PSSM(self, pssm_file, window_size=7):
         """See section 4.2.1 from paper.
         Args:
             pssm_file (_type_): _description_
             window_size (int, optional): 0 < window_size < L. Defaults to 7.
         Returns:
-            ndarray: 1D. 20+20*window
+            ndarray: 1D. 20+20*window_size
         """
         df, _ = self.pssm.parse_pssm_output_file(pssm_file)
         P = np.array(df[range(2, 21+1)], dtype=np.float32) #shape: Lx20, P=log-odds
@@ -79,7 +104,7 @@ class SAAFEC_SEQ(object):
             i (int): zero_based_mutation_site
             n_neighbors (int, optional): Defaults to 7.
         Returns:
-            ndarray: 1D. 20*n_neighbors
+            ndarray: 1D. 20*(2*n_neighbors+1)
         """
         features = self.pssm.get_neighbor_logodds_by_mutation_site_in_middle(i=i, neighbors=n_neighbors, pssm_file=pssm_file) #shape: 20xwindow_size=140
         # print(features)
@@ -105,32 +130,42 @@ class SAAFEC_SEQ(object):
         # print(features.shape)
         return features
 
+
     def property_change(self, wild_res, mut_res, prop_dict, change_types_dict):
         return change_types_dict[prop_dict[wild_res] + prop_dict[mut_res]]
 
-    def get_physiochemical_properties_at_mutation_site(self, wild_residue, mutant_residue):
-        net_vol = STATIC.RESIDUE_VOLUME[mutant_residue] - STATIC.RESIDUE_VOLUME[wild_residue]
-        net_hydrophobicity = STATIC.MOON_HYDROPHOBIC_INDEX[mutant_residue] - STATIC.MOON_HYDROPHOBIC_INDEX[wild_residue]
-        mutation_type = self.mutation_types[wild_residue + mutant_residue]
+    def get_physiochemical_properties_at_mutation_site(self, wild_res, mut_res):
+        """_summary_
+
+        Args:
+            wild_res (_type_): _description_
+            mut_res (_type_): _description_
+
+        Returns:
+            ndarray: 1D. [8]
+        """
+        net_vol = STATIC.RESIDUE_VOLUME[mut_res] - STATIC.RESIDUE_VOLUME[wild_res]
+        net_hydrophobicity = STATIC.MOON_HYDROPHOBIC_INDEX[mut_res] - STATIC.MOON_HYDROPHOBIC_INDEX[wild_res]
+        mutation_type = self.mutation_types[wild_res + mut_res]
         # net_flexibility = ? # did not understand
-        chem_prop_change = self.property_change(wild_residue, mutant_residue, self.chem_prop_dict, self.chem_prop_change_types)
-        size_change = self.property_change(wild_residue, mutant_residue, self.size_dict, self.size_change_types)
-        polarity_change = self.property_change(wild_residue, mutant_residue, self.polarity_dict, self.polarity_change_types)
-        hydrogen_bond_change = self.property_change(wild_residue, mutant_residue, self.hydrogen_bond_dict, self.hydrogen_bond_change_types)
-        hydrophobicity_change = self.property_change(wild_residue, mutant_residue, self.hydrophobicity_dict, self.hydrophobicity_change_types)
+        chem_prop_change = self.property_change(wild_res, mut_res, self.chem_prop_dict, self.chem_prop_change_types)
+        size_change = self.property_change(wild_res, mut_res, self.size_dict, self.size_change_types)
+        polarity_change = self.property_change(wild_res, mut_res, self.polarity_dict, self.polarity_change_types)
+        hydrogen_bond_change = self.property_change(wild_res, mut_res, self.hydrogen_bond_dict, self.hydrogen_bond_change_types)
+        hydrophobicity_change = self.property_change(wild_res, mut_res, self.hydrophobicity_dict, self.hydrophobicity_change_types)
         features = np.array([net_vol, net_hydrophobicity, mutation_type, chem_prop_change, size_change, polarity_change, hydrogen_bond_change, hydrophobicity_change], dtype=np.float32)
         # print(features.shape)
         return features
 
-    def extra(self, wild_residue, mutant_residue):
-        continuous_mutation_type = self.waveenc.get(self.mutation_types[wild_residue+mutant_residue], dim=10)
+    def extra(self, wild_res, mut_res):
+        continuous_mutation_type = self.waveenc.get(self.mutation_types[wild_res+mut_res], dim=10)
         print(continuous_mutation_type)
 
 
-saafec_seq = SAAFEC_SEQ()
+# saafec_seq = SAAFEC_SEQ()
 # saafec_seq.get_pseudo_PSSM("data/pssms_s2648_wild/1a5eA.pssm")
 # features = saafec_seq.get_neighbor_conservation_scores("data/pssms_s2648_wild/1a5eA.pssm", 0, 3)
 # features = saafec_seq.get_seq_neighbor_features("data/fastas/1a5eA.fasta", 0, 3, True) # 1st amino acid is the mutation site
 # features = saafec_seq.get_seq_neighbor_features("data/fastas/1a5eA.fasta", 155, 3, True) # 155th (last) amino acid is the mutation site
-saafec_seq.get_physiochemical_properties_at_mutation_site("R", "A")
+# saafec_seq.get_physiochemical_properties_at_mutation_site("R", "A")
 # saafec_seq.extra("R", "A")

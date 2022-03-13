@@ -35,8 +35,8 @@ class Onehot(object):
         elif i+n_neighbors >= len(seq): 
             sub_seq = seq[i-n_neighbors:]
             sub_seq = sub_seq + "0" * (2*n_neighbors+1 - len(sub_seq)) #padding at the end
-        else: sub_seq = seq[i-n_neighbors, i+n_neighbors+1]
-        return self.sequence(sub_seq)
+        else: sub_seq = seq[i-n_neighbors:i+n_neighbors+1]
+        return self.sequence(sub_seq, smooth)
 
     def a_secondary_structure(self, ss, smooth=True):
         letter = self.SS_dict.get(ss)
