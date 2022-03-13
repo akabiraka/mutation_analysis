@@ -4,6 +4,7 @@ sys.path.append("../mutation_analysis")
 import features.static as STATIC
 from features.PSSM import PSSM
 from encoding_methods.Onehot import Onehot
+from encoding_methods.WaveEncoding import WaveEncoding
 
 import numpy as np
 from Bio import SeqIO
@@ -13,8 +14,37 @@ class SAAFEC_SEQ(object):
     def __init__(self) -> None:
         self.pssm = PSSM()
         self.onehot = Onehot()
+        self.waveenc = WaveEncoding()
         self.mutation_types = {"".join(x):i+1 for i, x in enumerate(itertools.permutations("ARNDCQEGHILKMFPSTWYV", 2))} #range(1, 380+1)
-
+        # A:Aliphatic, B:aromatic, C:sulfur, D:hydroxyl, E:basic, F:acidic, G:amide
+        self.chem_prop_dict = {"A":"A", "G":"A", "I":"A", "L":"A", "P":"A", "V":"A", 
+                               "F":"B", "W":"B", "Y":"B", 
+                               "C":"C", "M":"C",
+                               "S":"D", "T":"D",
+                               "R":"E", "H":"E", "K":"E", 
+                               "D":"F", "E":"F", 
+                               "N":"G", "Q":"G"}
+        self.chem_prop_change_types = {"".join(x):i+1 for i, x in enumerate(itertools.product("ABCDEFG", "ABCDEFG"))} #range(1, 49+1)
+        # A:small, B:medium, C:large
+        self.size_dict = {"G":"A", "A":"A", "S":"A", "C":"A", "D":"A", "P":"A", "N":"A", "T":"A",
+                          "Q":"B", "E":"B", "H":"B", "V":"B",   
+                          "R":"C", "I":"C", "L":"C", "K":"C", "M":"C", "F":"C", "W":"C", "Y":"C"}
+        self.size_change_types = {"".join(x):i+1 for i, x in enumerate(itertools.product("ABC", "ABC"))} #range(1, 9+1)
+        # A:polar, B:nonpolar
+        self.polarity_dict = {"R":"A", "N":"A", "D":"A", "Q":"A", "E":"A", "H":"A", "K":"A", "S":"A", "T":"A", "Y":"A", 
+                              "A":"B", "C":"B", "G":"B", "I":"B", "L":"B", "M":"B", "F":"B", "P":"B", "W":"B", "V":"B"}
+        self.polarity_change_types = {"".join(x):i+1 for i, x in enumerate(itertools.product("AB", "AB"))} #range(1, 4+1)
+        # A:donor, B:acceptor, C:donor and acceptor, D:none
+        self.hydrogen_bond_dict = {"R":"A", "K":"A", "W":"A", 
+                                   "D":"B", "E":"B", 
+                                   "N":"C", "Q":"C", "H":"C", "S":"C", "T":"C", "Y":"C",
+                                   "A":"D", "C":"D", "G":"D", "I":"D", "L":"D", "M":"D", "F":"D", "P":"D", "V":"D"}
+        self.hydrogen_bond_change_types = {"".join(x):i+1 for i, x in enumerate(itertools.product("ABCD", "ABCD"))} #range(1, 16+1)
+        # A:hydrophobic, B:neutral, C:hydrophilic
+        self.hydrophobicity_dict = {"A":"A", "C":"A", "I":"A", "L":"A", "M":"A", "F":"A", "W":"A", "V":"A", 
+                                    "G":"B", "H":"B", "P":"B", "S":"B", "T":"B", "Y":"B", 
+                                    "R":"C", "N":"C", "D":"C", "Q":"C", "E":"C", "K":"C"}
+        self.hydrophobicity_change_types = {"".join(x):i+1 for i, x in enumerate(itertools.product("ABC", "ABC"))} #range(1, 9+1)
 
     def get_pseudo_PSSM(self, pssm_file, window_size=7):
         """See section 4.2.1 from paper.
@@ -75,11 +105,26 @@ class SAAFEC_SEQ(object):
         # print(features.shape)
         return features
 
+    def property_change(self, wild_res, mut_res, prop_dict, change_types_dict):
+        return change_types_dict[prop_dict[wild_res] + prop_dict[mut_res]]
+
     def get_physiochemical_properties_at_mutation_site(self, wild_residue, mutant_residue):
         net_vol = STATIC.RESIDUE_VOLUME[mutant_residue] - STATIC.RESIDUE_VOLUME[wild_residue]
         net_hydrophobicity = STATIC.MOON_HYDROPHOBIC_INDEX[mutant_residue] - STATIC.MOON_HYDROPHOBIC_INDEX[wild_residue]
-        mutation_type = self.mutation_types[wild_residue+mutant_residue]
-        print(net_vol, net_hydrophobicity, mutation_type)
+        mutation_type = self.mutation_types[wild_residue + mutant_residue]
+        # net_flexibility = ? # did not understand
+        chem_prop_change = self.property_change(wild_residue, mutant_residue, self.chem_prop_dict, self.chem_prop_change_types)
+        size_change = self.property_change(wild_residue, mutant_residue, self.size_dict, self.size_change_types)
+        polarity_change = self.property_change(wild_residue, mutant_residue, self.polarity_dict, self.polarity_change_types)
+        hydrogen_bond_change = self.property_change(wild_residue, mutant_residue, self.hydrogen_bond_dict, self.hydrogen_bond_change_types)
+        hydrophobicity_change = self.property_change(wild_residue, mutant_residue, self.hydrophobicity_dict, self.hydrophobicity_change_types)
+        features = np.array([net_vol, net_hydrophobicity, mutation_type, chem_prop_change, size_change, polarity_change, hydrogen_bond_change, hydrophobicity_change], dtype=np.float32)
+        # print(features.shape)
+        return features
+
+    def extra(self, wild_residue, mutant_residue):
+        continuous_mutation_type = self.waveenc.get(self.mutation_types[wild_residue+mutant_residue], dim=10)
+        print(continuous_mutation_type)
 
 
 saafec_seq = SAAFEC_SEQ()
@@ -88,3 +133,4 @@ saafec_seq = SAAFEC_SEQ()
 # features = saafec_seq.get_seq_neighbor_features("data/fastas/1a5eA.fasta", 0, 3, True) # 1st amino acid is the mutation site
 # features = saafec_seq.get_seq_neighbor_features("data/fastas/1a5eA.fasta", 155, 3, True) # 155th (last) amino acid is the mutation site
 saafec_seq.get_physiochemical_properties_at_mutation_site("R", "A")
+# saafec_seq.extra("R", "A")
