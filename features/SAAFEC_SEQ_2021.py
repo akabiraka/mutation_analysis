@@ -1,15 +1,19 @@
 import sys
 sys.path.append("../mutation_analysis")
+
+import features.static as STATIC
 from features.PSSM import PSSM
-from features.Onehot import Onehot
+from encoding_methods.Onehot import Onehot
 
 import numpy as np
 from Bio import SeqIO
+import itertools
 
 class SAAFEC_SEQ(object):
     def __init__(self) -> None:
         self.pssm = PSSM()
         self.onehot = Onehot()
+        self.mutation_types = {"".join(x):i+1 for i, x in enumerate(itertools.permutations("ARNDCQEGHILKMFPSTWYV", 2))} #range(1, 380+1)
 
 
     def get_pseudo_PSSM(self, pssm_file, window_size=7):
@@ -45,12 +49,13 @@ class SAAFEC_SEQ(object):
             i (int): zero_based_mutation_site
             n_neighbors (int, optional): Defaults to 7.
         Returns:
-            ndarray: 1D. 20*window
+            ndarray: 1D. 20*n_neighbors
         """
         features = self.pssm.get_neighbor_logodds_by_mutation_site_in_middle(i=i, neighbors=n_neighbors, pssm_file=pssm_file) #shape: 20xwindow_size=140
         # print(features)
         features = np.hstack(features)
         return features
+        
 
     def get_seq_neighbor_features(self, fasta_file, i, n_neighbors=3, smooth=True):
         """See section 4.2.3 from paper.
@@ -59,16 +64,27 @@ class SAAFEC_SEQ(object):
             i (int): 0-based mutation site
             n_neighbors (int, optional): on both sides of i. Defaults to 3.
             smooth (bool, optional): The encoding type. Defaults to True.
+
+        Returns:
+            ndarray: [(2*n_neighbors+1)*20]
         """
         fasta = next(SeqIO.parse(fasta_file, "fasta"))
         seq = str(fasta.seq)
         features = self.onehot.mutation_site_with_neighbors(seq, i, n_neighbors, smooth)
-        # print(features)
+        features = np.hstack(features)
+        # print(features.shape)
         return features
+
+    def get_physiochemical_properties_at_mutation_site(self, wild_residue, mutant_residue):
+        net_vol = STATIC.RESIDUE_VOLUME[mutant_residue] - STATIC.RESIDUE_VOLUME[wild_residue]
+        net_hydrophobicity = STATIC.MOON_HYDROPHOBIC_INDEX[mutant_residue] - STATIC.MOON_HYDROPHOBIC_INDEX[wild_residue]
+        mutation_type = self.mutation_types[wild_residue+mutant_residue]
+        print(net_vol, net_hydrophobicity, mutation_type)
 
 
 saafec_seq = SAAFEC_SEQ()
 # saafec_seq.get_pseudo_PSSM("data/pssms_s2648_wild/1a5eA.pssm")
 # features = saafec_seq.get_neighbor_conservation_scores("data/pssms_s2648_wild/1a5eA.pssm", 0, 3)
-features = saafec_seq.get_seq_neighbor_features("data/fastas/1a5eA.fasta", 0, 3, True) # 1st amino acid is the mutation site
-features = saafec_seq.get_seq_neighbor_features("data/fastas/1a5eA.fasta", 155, 3, True) # 155th (last) amino acid is the mutation site
+# features = saafec_seq.get_seq_neighbor_features("data/fastas/1a5eA.fasta", 0, 3, True) # 1st amino acid is the mutation site
+# features = saafec_seq.get_seq_neighbor_features("data/fastas/1a5eA.fasta", 155, 3, True) # 155th (last) amino acid is the mutation site
+saafec_seq.get_physiochemical_properties_at_mutation_site("R", "A")

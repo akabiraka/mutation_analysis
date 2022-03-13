@@ -2,6 +2,10 @@ import sys
 sys.path.append("../mutation_analysis")
 
 
+# FORMAT
+# {"A": , "R": , "N": , "D": , "C": , "Q": , "E": , "G": , "H": , "I": ,
+#  "L": , "K": , "M": , "F": , "P": , "S": , "T": , "W": , "Y": , "V": }
+
 # source: taken from SCONES supplementary table s1: https://pubs.acs.org/doi/suppl/10.1021/acs.jpcb.1c04913/suppl_file/jp1c04913_si_001.pdf
 AA_FORMAL_CHARGE = {"A": 0, "C": 0, "D": -1, "E": -1, "F": 0, "G": 0, "H": 1, "I": 0, "K": 1, "L": 0, 
                     "M": 0, "N": 0, "P":  0, "Q":  1, "R": 1, "S": 0, "T": 0, "V": 0, "W": 0, "Y": 0}
@@ -13,7 +17,7 @@ NORMALIZED_VAN_DER_WAALS_VOL = {"A": 1.00, "R": 6.13, "N": 2.95, "D": 2.78, "C":
 # print(NORMALIZED_VAN_DER_WAALS_VOL["D"])
 
 # source: https://www.genome.jp/entry/aaindex:KYTJ820101
-HYDROPATHY_INDEX = {"A":  1.8, "R": -4.5, "N": -3.5, "D": -3.5, "C":  2.5, "Q": -3.5, "E": -3.5, "G": -0.4, "H": -3.2, "I":  4.5, 
+KYTE_HYDROPATHY_INDEX = {"A":  1.8, "R": -4.5, "N": -3.5, "D": -3.5, "C":  2.5, "Q": -3.5, "E": -3.5, "G": -0.4, "H": -3.2, "I":  4.5, 
                     "L":  3.8, "K": -3.9, "M":  1.9, "F":  2.8, "P": -1.6, "S": -0.8, "T": -0.7, "W": -0.9, "Y": -1.3, "V":  4.2}
 # print(HYDROPATHY_INDEX["D"])
 
@@ -29,5 +33,16 @@ POLARITY = {"A": 8.1, "R": 10.5, "N": 11.6, "D": 13.0, "C": 5.5, "Q": 10.5, "E":
 
 # Residue-accessible surface area in tripeptide. source: https://www.genome.jp/entry/aaindex:CHOC760101
 RASA_TRIPEPTIDE = {"A": 115., "R": 225., "N": 160., "D": 150., "C": 135., "Q": 180., "E": 190., "G":  75., "H": 195., "I": 175.,
-                      "L": 170., "K": 200., "M": 185., "F": 210., "P": 145., "S": 115., "T": 140., "W": 255., "Y": 230., "V": 155.}
+                   "L": 170., "K": 200., "M": 185., "F": 210., "P": 145., "S": 115., "T": 140., "W": 255., "Y": 230., "V": 155.}
 # print(RASA_TRIPEPTIDE["D"])
+
+# source: https://www.genome.jp/entry/aaindex:GOLD730102
+RESIDUE_VOLUME = {"A":  88.3, "R": 181.2, "N": 125.1, "D": 110.8, "C": 112.4, "Q": 148.7, "E": 140.5, "G":  60.0, "H": 152.6, "I": 168.5,
+                  "L": 168.5, "K": 175.6, "M": 162.2, "F": 189.0, "P": 122.2, "S":  88.7, "T": 118.2, "W": 227.0, "Y": 193.0, "V": 141.4}
+
+# base paper: https://pubmed.ncbi.nlm.nih.gov/21606332/
+# source: https://www.cgl.ucsf.edu/chimera/docs/UsersGuide/midas/hydrophob.html
+# or source: https://www.cgl.ucsf.edu/chimera/docs/ContributedSoftware/defineattrib/mfHydrophobicity.txt
+MOON_HYDROPHOBIC_INDEX = {"A":   0.0, "R": 3.71, "N":  3.47, "D":  2.95, "C":  0.49, "Q": 3.01, "E": 1.64, "G":  1.72, "H":  4.76, "I": -1.56,
+                          "L": -1.81, "K": 5.39, "M": -0.76, "F": -2.20, "P": -1.52, "S": 1.83, "T": 1.78, "W": -0.38, "Y": -1.09, "V": -0.78}
+
