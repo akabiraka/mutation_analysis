@@ -4,21 +4,14 @@ sys.path.append("../mutation_analysis")
 import pandas as pd
 import subprocess
 import os
-from objects.PDBData import PDBData
 from features.PSSM import PSSM
-import generators.utils as Utils
 
 
 # configurations
-pdb_dir = "data/pdbs/"
-pdbs_clean_dir = "data/pdbs_clean/"
 fastas_dir = "data/fastas/"
-CIF = "mmCif"
-input_file_path = "data/clean_2/DeepDDG_S276.csv"
-# input_file_path = "data/dataset_5_test.csv"
+input_file_path = "data/clean_2/PoPMuSiC_2.csv"
      
 # object initialization
-PDBData = PDBData(pdb_dir=pdb_dir)
 pssm = PSSM()
 
 # data generation
@@ -38,7 +31,7 @@ def generate_mutant_pssm(mutant_fasta_file):
 def generate_pssm_for_ith_wild_fasta(i):
     pdb_chain_ids = dfs["pdb_id"].str.lower()+dfs["chain_id"]
     unique_pdb_chain_ids = pdb_chain_ids.drop_duplicates().to_list()
-    unique_pdb_chain_ids.sort()
+    # unique_pdb_chain_ids.sort()
     print(len(unique_pdb_chain_ids))
     pdb_chain_id = unique_pdb_chain_ids[i]
     print(pdb_chain_id)
@@ -49,7 +42,7 @@ def generate_pssm_for_ith_wild_fasta(i):
 def generate_pssm_for_ith_mutant_fasta(i):
     pdb_chain_mutation_ids = dfs["pdb_id"].str.lower()+dfs["chain_id"]+ "_" + dfs["mutation_event"]
     pdb_chain_mutation_ids = pdb_chain_mutation_ids.drop_duplicates().to_list()
-    pdb_chain_mutation_ids.sort()
+    # pdb_chain_mutation_ids.sort()
     print(len(pdb_chain_mutation_ids))
     pdb_chain_mutation_id = pdb_chain_mutation_ids[i]
     print(pdb_chain_mutation_id)
