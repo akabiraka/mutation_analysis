@@ -31,6 +31,7 @@ def generate_mutant_pssm(mutant_fasta_file):
 def generate_pssm_for_ith_wild_fasta(i):
     pdb_chain_ids = dfs["pdb_id"].str.lower()+dfs["chain_id"]
     unique_pdb_chain_ids = pdb_chain_ids.drop_duplicates().to_list()
+    #print(unique_pdb_chain_ids)
     # unique_pdb_chain_ids.sort()
     print(len(unique_pdb_chain_ids))
     pdb_chain_id = unique_pdb_chain_ids[i]
@@ -62,7 +63,7 @@ def remove_ith_proteins_pssms(i):
     run_command("rm -rf data/pssms/{}*".format(ith_pdb_id))
 
 i = int(os.environ["SLURM_ARRAY_TASK_ID"]) 
-# i=11
+# i=113
 # remove_ith_proteins_pssms(i)
 # generate_pssm_for_ith_wild_fasta(i)
 generate_pssm_for_ith_mutant_fasta(i)

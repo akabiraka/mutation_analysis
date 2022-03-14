@@ -13,5 +13,5 @@
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=8000MB
 
-#SBATCH --array=1315-1318
+#SBATCH --array=2195-2204
 python generators/distributed_pssm.py
