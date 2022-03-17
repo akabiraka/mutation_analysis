@@ -24,6 +24,18 @@
   * Sample usage:
     * Remove the commented line at the end of the file.
     * Run: `python features/Orientation.py`
+* **MSA using hhblits**:
+  * hh-suite3.0 setup:
+    * Homepage: [URL](https://github.com/soedinglab/hh-suite).
+    * User guide: [URL](https://github.com/soedinglab/hh-suite/wiki#generating-a-multiple-sequence-alignment-using-hhblits).
+    * Download precompiled: [URL](https://mmseqs.com/hhsuite/) (hhsuite-linux-sse2.tar.gz).
+    * An example:
+      * Download a small database (i.e. scop40_01Mar17.tgz (381M)) from [URL](https://wwwuser.gwdg.de/~compbiol/data/hhsuite/databases/hhsuite_dbs/).
+      * To generate MSA given a fasta file: `./3rd_party_items/hhsuite3.0/bin/hhblits -i path/to/filename.fasta -o path/to/filename.msa -d ./3rd_party_items/scop40_01Mar17/scop40`.
+    * To search against a compiled large database:
+      * Download Uniprot (18G): [URL](http://wwwuser.gwdg.de/~compbiol/data/hhsuite/benchmark/uniprot20_2015_06_bench.tgz).
+
+    
 * **PSSM generation**:
   * Based on wild and mutant sequences.
   * PSI-Blast setup:
