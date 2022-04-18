@@ -32,7 +32,7 @@ class MSA(object):
             print("Computing MSA for {} using HH-suite ... ...".format(pdbid))
             subprocess.getoutput(command)
             # a3m generating cmd creates .hhr file in the input (fastas) dir, remove if you do not want this
-            # subprocess.getoutput("rm data/fastas/{}.hhr".format(pdbid))
+            subprocess.getoutput("rm data/fastas/{}.hhr".format(pdbid))
         
 
 # msa = MSA(db="./3rd_party_items/scop40_01Mar17/scop40", output_dir="data/msas/")
